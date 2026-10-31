@@ -24,9 +24,9 @@ func RenderInvoice(d models.InvoiceDetails) ([]byte, error) {
 	doc := gofpdf.New("P", "mm", "A4", "")
 	doc.SetMargins(pageMargin, pageMargin, pageMargin)
 	doc.SetAutoPageBreak(true, 20)
-	doc.SetTitle("Invoice " + d.InvoiceNumber)
-	doc.SetAuthor(companyName)
-	doc.SetCreator("Recur")
+	doc.SetTitle("Invoice "+d.InvoiceNumber, false)
+	doc.SetAuthor(companyName, false)
+	doc.SetCreator("Recur", false)
 	doc.AddPage()
 
 	renderHeader(doc, d)
@@ -34,6 +34,10 @@ func RenderInvoice(d models.InvoiceDetails) ([]byte, error) {
 	renderLineItems(doc, d)
 	renderTotals(doc, d)
 	renderFooter(doc, d)
+
+	if doc.Error() != nil {
+		return nil, fmt.Errorf("render invoice pdf: %w", doc.Error())
+	}
 
 	var buf bytes.Buffer
 	if err := doc.Output(&buf); err != nil {
@@ -79,7 +83,7 @@ func renderParties(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
 	doc.SetFont("Helvetica", "", 10)
 	doc.SetTextColor(63, 63, 70)
 	doc.MultiCell(85, 5, d.CustomerEmail, "", "L", false)
-	doc.Ln(4)
+	leftBottom := doc.GetY()
 
 	doc.SetXY(pageMargin+95, top)
 	doc.SetFont("Helvetica", "B", 9)
@@ -92,6 +96,9 @@ func renderParties(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
 		{"Due", formatDatePtr(d.DueAt)},
 		{"Period", formatDate(d.PeriodStart) + " to " + formatDate(d.PeriodEnd)},
 	}
+	if d.PaidAt != nil {
+		meta = append(meta, [2]string{"Paid", formatDatePtr(d.PaidAt)})
+	}
 	for _, row := range meta {
 		doc.SetX(pageMargin + 95)
 		doc.SetFont("Helvetica", "", 9)
@@ -101,7 +108,13 @@ func renderParties(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
 		doc.SetTextColor(24, 24, 27)
 		doc.CellFormat(63, 5, row[1], "", 1, "L", false, 0, "")
 	}
-	doc.Ln(6)
+	rightBottom := doc.GetY()
+
+	nextY := leftBottom
+	if rightBottom > nextY {
+		nextY = rightBottom
+	}
+	doc.SetY(nextY + 6)
 }
 
 func renderLineItems(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
@@ -124,8 +137,15 @@ func renderLineItems(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
 	if d.VariantName != "" && d.VariantName != d.ProductName {
 		description += " - " + d.VariantName
 	}
-	if d.BillingInterval != "" {
-		description += " (" + d.BillingInterval + "ly)"
+	switch strings.ToLower(d.BillingInterval) {
+	case "month":
+		description += " (monthly)"
+	case "year":
+		description += " (yearly)"
+	default:
+		if d.BillingInterval != "" {
+			description += " (" + d.BillingInterval + ")"
+		}
 	}
 
 	lineAmount := d.UnitPriceCents * int64(d.Quantity)
@@ -150,8 +170,8 @@ func renderLineItems(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
 }
 
 func renderTotals(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
-	doc.SetX(pageMargin + 90)
 	row := func(label, value string, bold bool) {
+		doc.SetX(pageMargin + 90)
 		style := ""
 		if bold {
 			style = "B"
@@ -167,13 +187,31 @@ func renderTotals(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
 	if d.DiscountCents > 0 {
 		row("Discount", "-"+formatMoney(d.DiscountCents, d.Currency), false)
 	}
+	if d.TaxCents > 0 {
+		taxLabel := "Tax"
+		if d.TaxRateBps > 0 {
+			if d.TaxRateBps%100 == 0 {
+				taxLabel = fmt.Sprintf("Tax (%d%%)", d.TaxRateBps/100)
+			} else {
+				taxLabel = fmt.Sprintf("Tax (%.2f%%)", float64(d.TaxRateBps)/100.0)
+			}
+		}
+		row(taxLabel, formatMoney(d.TaxCents, d.Currency), false)
+	}
 	doc.SetDrawColor(228, 228, 231)
 	doc.Line(pageMargin+90, doc.GetY(), pageMargin+180, doc.GetY())
 	doc.Ln(1)
-	row("Total due", formatMoney(d.TotalCents, d.Currency), true)
+	totalLabel := "Total due"
+	if d.Status == models.InvoiceStatusPaid {
+		totalLabel = "Total paid"
+	}
+	row(totalLabel, formatMoney(d.TotalCents, d.Currency), true)
 }
 
 func renderFooter(doc *gofpdf.Fpdf, d models.InvoiceDetails) {
+	if doc.GetY() > 260 {
+		doc.AddPage()
+	}
 	doc.SetY(265)
 	doc.SetDrawColor(228, 228, 231)
 	doc.Line(pageMargin, doc.GetY(), pageMargin+contentW, doc.GetY())

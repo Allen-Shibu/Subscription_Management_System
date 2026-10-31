@@ -46,6 +46,42 @@ func TestRenderInvoice(t *testing.T) {
 	}
 }
 
+func TestRenderInvoiceWithTaxAndPaid(t *testing.T) {
+	issued := time.Date(2026, 10, 31, 0, 0, 0, 0, time.UTC)
+	paid := issued.Add(2 * time.Hour)
+	details := models.InvoiceDetails{
+		Invoice: models.Invoice{
+			ID:            2,
+			InvoiceNumber: "INV-000002",
+			Status:        models.InvoiceStatusPaid,
+			PeriodStart:   issued,
+			PeriodEnd:     issued.AddDate(1, 0, 0),
+			SubtotalCents: 100000,
+			DiscountCents: 10000,
+			TaxCents:      16200,
+			TotalCents:    106200,
+			TaxRateBps:    1800,
+			IssuedAt:      &issued,
+			PaidAt:        &paid,
+		},
+		CustomerName:    "Very Long Customer Name For An Enterprise Account Incorporated LLC",
+		CustomerEmail:   "enterprise.billing.department@subsidiary.example.com",
+		ProductName:     "Enterprise Suite",
+		Quantity:        1,
+		UnitPriceCents:  100000,
+		Currency:        "USD",
+		BillingInterval: "year",
+	}
+
+	doc, err := RenderInvoice(details)
+	if err != nil {
+		t.Fatalf("RenderInvoice() error = %v", err)
+	}
+	if !bytes.HasPrefix(doc, []byte("%PDF-")) {
+		t.Fatalf("document is not a PDF")
+	}
+}
+
 func TestFormatMoney(t *testing.T) {
 	tests := []struct {
 		cents    int64

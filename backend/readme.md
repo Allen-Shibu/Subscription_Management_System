@@ -115,8 +115,10 @@ All of these require the staff or admin role.
 | `GET` | `/api/staff/invoices/:invoiceID/refunds` | List refunds. |
 | `PUT` | `/api/admin/subscriptions/:id/tax-rule` | Admin only. `{"taxRuleId": 1}` attaches a tax rule; `null` clears it. |
 
-<<<<<<< HEAD
-Invoices are numbered automatically (`INV-000001`). Issuing one applies the subscription's tax rule: tax is charged on `subtotal - discount`, and the rate is snapshotted on the invoice. Emailing invoices is not implemented yet; `emailSentAt` stays `null`.
+Invoices are numbered automatically (`INV-000001`). Issuing one applies the subscription's tax rule: tax is charged on `subtotal - discount`, and the rate is snapshotted on the invoice.
+Invoices can be downloaded as PDF or sent to customers via email.
+
+PDFs are rendered cleanly and concisely with `gofpdf`. The `send` endpoint emails the rendered PDF attachment through SMTP using the customer's email address; it records `emailSentAt` on success. It returns `409 Conflict` if the invoice was already emailed or cannot be sent in its current status (e.g. draft, void, uncollectible), `422 Unprocessable Entity` if the customer has no email, and `502 Bad Gateway` if email delivery fails. Sending requires `SMTP_HOST`, `SMTP_FROM`, and (usually) credentials. Port `587` uses STARTTLS, and port `465` uses implicit TLS.
 
 ## Tax rules
 
@@ -137,13 +139,6 @@ Admins create and change rules; any signed-in user can read them.
 ## Staff accounts
 
 `POST /api/admin/staff` with `{"email":"staff@example.com"}` sends a Clerk invitation carrying `public_metadata.role = "staff"`. The invitee sets their own password, so no credentials pass through this API. Admin role required.
-=======
-Invoices are numbered automatically (`INV-000001`). `PDF` is rendered with gofpdf.
-`send` emails the PDF through SMTP using the customer's `users.email`; it returns `409`
-if the invoice was already sent, `422` if the customer has no email, and `502` if
-delivery fails. Sending requires `SMTP_HOST`, `SMTP_FROM`, and (usually) credentials.
-Port `587` uses STARTTLS, port `465` uses implicit TLS.
->>>>>>> 9022f34 (feat(backend):add invoice service)
 
 ## Example
 

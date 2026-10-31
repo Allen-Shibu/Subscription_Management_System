@@ -62,3 +62,29 @@ func TestBuildMessageIncludesAttachment(t *testing.T) {
 		t.Fatal("attachment part not found")
 	}
 }
+
+func TestNoopSender(t *testing.T) {
+	sender := &NoopSender{}
+	err := sender.Send(t.Context(), Message{To: "test@example.com", Subject: "Hello"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestEnvelopeAddress(t *testing.T) {
+	tests := []struct {
+		input string
+		want  string
+	}{
+		{"user@example.com", "user@example.com"},
+		{"John Doe <john@example.com>", "john@example.com"},
+		{"<simple@example.com>", "simple@example.com"},
+		{"invalid-format", "invalid-format"},
+	}
+	for _, tt := range tests {
+		got := envelopeAddress(tt.input)
+		if got != tt.want {
+			t.Errorf("envelopeAddress(%q) = %q, want %q", tt.input, got, tt.want)
+		}
+	}
+}

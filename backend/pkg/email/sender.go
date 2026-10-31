@@ -49,6 +49,13 @@ type SMTPSender struct {
 	cfg Config
 }
 
+// NoopSender discards messages, suitable for tests or when email delivery is disabled.
+type NoopSender struct{}
+
+func (n *NoopSender) Send(ctx context.Context, msg Message) error {
+	return nil
+}
+
 // NewSMTP returns an SMTP-backed Sender. Port defaults to 587 and the
 // timeout defaults to 15 seconds.
 func NewSMTP(cfg Config) *SMTPSender {
@@ -81,12 +88,15 @@ func (s *SMTPSender) Send(ctx context.Context, msg Message) error {
 	dialer := &net.Dialer{Timeout: s.cfg.Timeout}
 	implicitTLS := s.cfg.Port == 465
 	var conn net.Conn
-	var err error
 	if implicitTLS {
-		conn, err = tls.DialWithDialer(dialer, "tcp", addr, &tls.Config{
-			ServerName: s.cfg.Host,
-			MinVersion: tls.VersionTLS12,
-		})
+		tlsDialer := &tls.Dialer{
+			NetDialer: dialer,
+			Config: &tls.Config{
+				ServerName: s.cfg.Host,
+				MinVersion: tls.VersionTLS12,
+			},
+		}
+		conn, err = tlsDialer.DialContext(ctx, "tcp", addr)
 	} else {
 		conn, err = dialer.DialContext(ctx, "tcp", addr)
 	}
@@ -125,7 +135,8 @@ func (s *SMTPSender) Send(ctx context.Context, msg Message) error {
 	if err := client.Mail(from); err != nil {
 		return fmt.Errorf("set sender: %w", err)
 	}
-	if err := client.Rcpt(msg.To); err != nil {
+	to := envelopeAddress(msg.To)
+	if err := client.Rcpt(to); err != nil {
 		return fmt.Errorf("set recipient: %w", err)
 	}
 

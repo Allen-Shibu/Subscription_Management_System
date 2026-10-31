@@ -19,11 +19,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-<<<<<<< HEAD
-func setupRouter(pool *pgxpool.Pool, mailer email.Sender) *gin.Engine {
-=======
-func setupRouter(pool *pgxpool.Pool, allowedOrigins string) *gin.Engine {
->>>>>>> 2ff69f2 (db:connection with neon)
+func setupRouter(pool *pgxpool.Pool, mailer email.Sender, allowedOrigins string) *gin.Engine {
 	r := gin.Default()
 
 	// Apply CORS middleware
@@ -87,7 +83,12 @@ func setupRouter(pool *pgxpool.Pool, allowedOrigins string) *gin.Engine {
 		subscriptionRepo := repository.NewSubscriptionRepository(pool)
 		invoiceService := invoicesvc.New(subscriptionRepo, mailer)
 		subscriptionHandler := handlers.NewSubscriptionHandler(subscriptionRepo, invoiceService)
-		subscriptionHandler.RegisterRoutes(staff)
+		subscriptionHandler.RegisterRoutes(staff, admin)
+
+		taxRuleHandler := handlers.NewTaxRuleHandler(repository.NewTaxRuleRepository(pool))
+		taxRuleHandler.RegisterRoutes(api, admin)
+
+		handlers.RegisterStaffRoutes(admin)
 	}
 
 	return r
@@ -110,7 +111,6 @@ func main() {
 	}
 	defer pool.Close()
 
-<<<<<<< HEAD
 	smtpPort, err := strconv.Atoi(cfg.SMTPPort)
 	if err != nil || smtpPort == 0 {
 		smtpPort = 587
@@ -126,10 +126,7 @@ func main() {
 		log.Println("[WARN] SMTP_HOST is not set; invoice emails will fail to send")
 	}
 
-	r := setupRouter(pool, mailer)
-=======
-	r := setupRouter(pool, cfg.CORSAllowedOrigins)
->>>>>>> 2ff69f2 (db:connection with neon)
+	r := setupRouter(pool, mailer, cfg.CORSAllowedOrigins)
 
 	log.Printf("[INFO] Server starting on port :%s\n", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {
