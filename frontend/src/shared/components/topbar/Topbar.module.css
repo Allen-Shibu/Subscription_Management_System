@@ -1,0 +1,125 @@
+.topbar {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  display: flex;
+  height: 68px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 0 32px;
+  border-bottom: 1px solid var(--color-topbar-border);
+  background: var(--color-topbar-bg);
+  backdrop-filter: blur(12px);
+}
+.search {
+  display: flex;
+  width: min(430px, 45vw);
+  height: 38px;
+  align-items: center;
+  gap: 9px;
+  padding: 0 11px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+  background: var(--color-input-bg);
+  color: var(--color-text-muted);
+}
+.search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text-strong);
+  font: inherit;
+  font-size: 12px;
+}
+.search input::placeholder {
+  color: var(--color-input-placeholder);
+}
+.search kbd {
+  flex: 0 0 auto;
+  padding: 3px 5px;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 4px;
+  color: var(--color-text-muted);
+  font-size: 9px;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.rangeButton,
+.iconButton,
+.menuButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.rangeButton {
+  gap: 8px;
+  padding: 9px 11px;
+  border: 1px solid var(--color-topbar-border);
+  border-radius: 7px;
+  background: var(--color-surface);
+  font: inherit;
+  font-size: 11px;
+}
+.rangeButton:hover {
+  background: var(--color-topbar-hover);
+}
+.iconButton {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+}
+.iconButton:hover {
+  background: var(--color-topbar-hover);
+}
+.menuButton {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+@media (max-width: 760px) {
+  .topbar {
+    height: 62px;
+    gap: 10px;
+    padding: 0 18px;
+  }
+  .menuButton {
+    display: inline-flex;
+    flex: 0 0 auto;
+  }
+  .search {
+    width: auto;
+    flex: 1 1 auto;
+  }
+  .search kbd,
+  .rangeButton {
+    display: none;
+  }
+  .actions {
+    gap: 6px;
+  }
+}
+@media (max-width: 420px) {
+  .topbar {
+    padding: 0 10px;
+  }
+  .search {
+    padding: 0 8px;
+  }
+  .search input {
+    font-size: 11px;
+  }
+  .iconButton {
+    display: none;
+  }
+}

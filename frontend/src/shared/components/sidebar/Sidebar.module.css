@@ -1,0 +1,140 @@
+.sidebar {
+  position: fixed;
+  z-index: 30;
+  inset: 0 auto 0 0;
+  display: flex;
+  width: 248px;
+  flex-direction: column;
+  padding: 22px 16px 18px;
+  border-right: 1px solid var(--color-border-primary);
+  background: var(--color-surface);
+}
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px 30px;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-primary);
+  font-size: 17px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.brandMark {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: 16px;
+}
+.sectionLabel {
+  margin: 0 10px 10px;
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.navigation {
+  display: grid;
+  gap: 5px;
+}
+.navLink {
+  display: flex;
+  min-height: 39px;
+  align-items: center;
+  gap: 11px;
+  padding: 0 11px;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+.navLink:hover {
+  background: var(--color-primary-highlight);
+  color: var(--color-primary);
+}
+.active,
+.active:hover {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+}
+.sidebarFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding: 14px 11px;
+  border-radius: 9px;
+  background: var(--color-surface-hover);
+}
+.sidebarFooter div {
+  display: grid;
+  gap: 3px;
+}
+.sidebarFooter strong {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+}
+.sidebarFooter span:not(.statusDot) {
+  color: var(--color-text-muted);
+  font-size: 10px;
+}
+.statusDot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: var(--color-success);
+}
+.closeButton,
+.backdrop {
+  display: none;
+}
+@media (max-width: 760px) {
+  .sidebar {
+    width: min(290px, 84vw);
+    transform: translateX(-102%);
+    transition: transform 0.22s ease;
+    box-shadow: var(--shadow-sidebar);
+  }
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+  .closeButton {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text-secondary);
+  }
+  .backdrop {
+    position: fixed;
+    z-index: 25;
+    inset: 0;
+    display: block;
+    border: 0;
+    background: var(--color-overlay-heavy);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .backdropVisible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
