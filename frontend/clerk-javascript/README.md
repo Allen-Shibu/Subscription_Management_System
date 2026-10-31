@@ -1,6 +1,6 @@
-# Clerk JavaScript app
+# Clerk React app
 
-A Vite app with Clerk sign-in and a user menu after sign-in.
+A React and Vite frontend with Clerk sign-in and a user menu after sign-in. The Go backend is separate from this folder.
 
 ## Run locally
 
