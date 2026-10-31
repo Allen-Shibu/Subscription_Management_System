@@ -88,6 +88,9 @@ func setupRouter(pool *pgxpool.Pool, mailer email.Sender, allowedOrigins string)
 		taxRuleHandler := handlers.NewTaxRuleHandler(repository.NewTaxRuleRepository(pool))
 		taxRuleHandler.RegisterRoutes(api, admin)
 
+		dashboardHandler := handlers.NewDashboardHandler(repository.NewDashboardRepository(pool))
+		dashboardHandler.RegisterRoutes(admin)
+
 		handlers.RegisterStaffRoutes(admin)
 	}
 

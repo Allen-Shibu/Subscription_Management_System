@@ -77,7 +77,7 @@ go test ./...
 | `GET` | `/health` | No | Service health check |
 | `GET` | `/api/health` | No | API health check |
 | `GET` | `/api/me` | Yes (Bearer Token) | Returns authenticated user claims & role |
-| `GET` | `/api/admin/ping` | Yes (Admin Role) | Admin-only test endpoint |
+| `GET` | `/api/admin/dashboard?months=12` | Yes (Admin Role) | MRR and revenue analytics for charts (summary, monthly series, by plan). `months` 1–24, default 12. |
 | `GET` | `/api/products` | Yes | List products |
 | `GET` | `/api/products/:id` | Yes | Get a product |
 | `GET` | `/api/products/:id/variants` | Yes | List a product's tiers |
