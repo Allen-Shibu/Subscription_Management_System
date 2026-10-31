@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
+	"recur_backend/internals/repository"
+
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -25,10 +27,14 @@ func respondDBError(c *gin.Context, err error) {
 	switch {
 	case errors.Is(err, pgx.ErrNoRows):
 		c.JSON(http.StatusNotFound, gin.H{"error": "not found"})
+	case errors.Is(err, repository.ErrInvoiceNotPaid):
+		c.JSON(http.StatusConflict, gin.H{"error": "invoice must be paid before refunding"})
+	case errors.Is(err, repository.ErrRefundExceedsTotal):
+		c.JSON(http.StatusBadRequest, gin.H{"error": "refund exceeds the remaining invoice total"})
 	case isPGError(err, "23505"):
 		c.JSON(http.StatusConflict, gin.H{"error": "already exists"})
 	case isPGError(err, "23503"):
-		c.JSON(http.StatusNotFound, gin.H{"error": "product not found"})
+		c.JSON(http.StatusNotFound, gin.H{"error": "referenced record not found"})
 	default:
 		log.Printf("[ERROR] database: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal server error"})

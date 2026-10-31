@@ -44,6 +44,17 @@ In the Clerk dashboard add a custom session claim (Sessions → Customize sessio
 
 Organization roles (`org:admin`, `org:staff`, `org:customer`) are accepted too.
 
+## Billing schema
+
+| Table | Purpose |
+|---|---|
+| `subscriptions` | Recurring subscription for a customer on a product tier. Price, currency and interval are snapshotted from the variant at creation. Supports `cancel_at_period_end`, `canceled_at`, `ended_at` and status `active` / `trialing` / `past_due` / `canceled` / `expired`. |
+| `invoices` | One row per billing period (`period_start` is unique per subscription). Auto number `INV-000001`, status `draft` / `open` / `paid` / `void` / `uncollectible`, plus `email_sent_at` for delivery tracking. `total_cents = subtotal_cents - discount_cents`. |
+| `subscription_discounts` | One-time discounts. `applied_invoice_id` stays `NULL` until an invoice consumes it. |
+| `refunds` | Money returned against a paid invoice. |
+
+Customers are rows in `users`, so a subscription references `users.id`.
+
 ## Running Tests
 ```bash
 go test ./...
@@ -70,6 +81,28 @@ go test ./...
 
 Prices are stored in integer cents (`priceCents`) to avoid floating point money bugs.
 `billingInterval` is `month` or `year`; `currency` is a 3-letter code (defaults to `USD`).
+
+## Subscription endpoints
+
+All of these require the staff or admin role.
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/staff/subscriptions` | Create a subscription (`customerId`, `variantId`, optional `quantity`, `startAt`). Price and interval are snapshotted from the variant. |
+| `GET` | `/api/staff/subscriptions` | List subscriptions, filter with `?customerId=` and `?status=`. |
+| `GET` | `/api/staff/subscriptions/:id` | Get a subscription. |
+| `PATCH` | `/api/staff/subscriptions/:id` | Change `quantity`, `currentPeriodStart`, `currentPeriodEnd`, `cancelAtPeriodEnd`. |
+| `POST` | `/api/staff/subscriptions/:id/cancel` | `{"atPeriodEnd":true}` flags cancellation; `false` cancels immediately. |
+| `POST` | `/api/staff/subscriptions/:id/discounts` | Add a one-time discount (`amountCents`, `reason`). |
+| `GET` | `/api/staff/subscriptions/:id/discounts` | List discounts and whether each was applied. |
+| `POST` | `/api/staff/subscriptions/:id/invoices` | Issue an invoice for the current period, consume pending discounts, and advance the subscription to the next period. |
+| `GET` | `/api/staff/subscriptions/:id/invoices` | List invoices. |
+| `GET` | `/api/staff/invoices/:invoiceID` | Get one invoice. |
+| `POST` | `/api/staff/invoices/:invoiceID/pay` | Mark an open invoice as paid. |
+| `POST` | `/api/staff/invoices/:invoiceID/refunds` | Refund a paid invoice (`amountCents`, `reason`), capped at the unrefunded total. |
+| `GET` | `/api/staff/invoices/:invoiceID/refunds` | List refunds. |
+
+Invoices are numbered automatically (`INV-000001`). Emailing them is not implemented yet; `emailSentAt` stays `null`.
 
 ## Example
 

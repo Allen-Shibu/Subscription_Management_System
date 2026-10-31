@@ -71,8 +71,14 @@ func setupRouter(pool *pgxpool.Pool) *gin.Engine {
 			})
 		}
 
+		staff := api.Group("/staff")
+		staff.Use(middleware.RequireAnyRole(types.RoleAdmin, types.RoleStaff))
+
 		productHandler := handlers.NewProductHandler(repository.NewProductRepository(pool))
 		productHandler.RegisterRoutes(api, admin)
+
+		subscriptionHandler := handlers.NewSubscriptionHandler(repository.NewSubscriptionRepository(pool))
+		subscriptionHandler.RegisterRoutes(staff)
 	}
 
 	return r

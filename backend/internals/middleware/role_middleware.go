@@ -12,7 +12,16 @@ import (
 // carry the given role, either as an organization role ("org:admin") or as
 // a custom "role" claim.
 func RequireRole(role string) gin.HandlerFunc {
-	want := normalizeRole(role)
+	return RequireAnyRole(role)
+}
+
+// RequireAnyRole allows the request when the claims carry at least one of the
+// given roles.
+func RequireAnyRole(roles ...string) gin.HandlerFunc {
+	want := make(map[string]struct{}, len(roles))
+	for _, role := range roles {
+		want[normalizeRole(role)] = struct{}{}
+	}
 
 	return func(c *gin.Context) {
 		claims, ok := clerk.SessionClaimsFromContext(c.Request.Context())
@@ -21,14 +30,16 @@ func RequireRole(role string) gin.HandlerFunc {
 			return
 		}
 
-		if !hasRole(claims, want) {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"error": "insufficient permissions",
-			})
-			return
+		for role := range want {
+			if hasRole(claims, role) {
+				c.Next()
+				return
+			}
 		}
 
-		c.Next()
+		c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+			"error": "insufficient permissions",
+		})
 	}
 }
 
