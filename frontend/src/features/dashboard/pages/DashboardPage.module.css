@@ -1,33 +1,37 @@
 .dashboard {
-  max-width: 1500px;
-  margin: 0 auto;
-}
-.headingRow {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 22px;
-  margin-bottom: 23px;
+  flex-direction: column;
+  gap: 24px;
 }
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
 .eyebrow {
-  margin: 0 0 7px;
+  margin: 0;
   color: var(--color-primary);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.headingRow h1 {
-  margin: 0;
+
+.header h1 {
+  margin: 6px 0 8px;
   color: var(--color-text-heading);
-  font-size: clamp(22px, 2vw, 29px);
-  letter-spacing: -0.035em;
+  font-size: 28px;
 }
+
 .subtitle {
-  margin: 6px 0 0;
-  color: var(--color-text-tertiary);
-  font-size: 11px;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
 }
+
 .headingActions {
   display: flex;
   gap: 9px;
@@ -35,17 +39,17 @@
 .primaryButton,
 .secondaryButton {
   display: inline-flex;
-  height: 35px;
+  height: 38px;
   align-items: center;
   justify-content: center;
   gap: 7px;
-  padding: 0 12px;
+  padding: 0 14px;
   border: 1px solid var(--color-border-primary);
-  border-radius: 7px;
+  border-radius: 8px;
   background: var(--color-surface);
   color: var(--color-text-secondary);
   font: inherit;
-  font-size: 10px;
+  font-size: 13px;
   white-space: nowrap;
 }
 .primaryButton {
@@ -459,6 +463,33 @@
   font-size: 8px;
   text-decoration: none;
 }
+.content {
+  display: grid;
+  gap: 20px;
+}
+
+.panel {
+  border: 1px solid var(--color-card-border);
+  border-radius: 16px;
+  background: var(--color-card-surface);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel h2 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--color-text-heading);
+}
+
+.panel p {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
 @media (max-width: 1050px) {
   .contentGrid {
     grid-template-columns: minmax(0, 1.4fr) minmax(230px, 0.8fr);
@@ -468,9 +499,15 @@
   }
 }
 @media (max-width: 760px) {
-  .headingRow {
+  .header {
+    flex-direction: column;
     align-items: flex-start;
   }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
   .contentGrid {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -488,7 +525,7 @@
   }
 }
 @media (max-width: 520px) {
-  .headingRow {
+  .header {
     display: grid;
   }
   .headingActions {

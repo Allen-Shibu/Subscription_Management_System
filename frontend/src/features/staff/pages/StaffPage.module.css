@@ -1,0 +1,389 @@
+.staff {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.eyebrow {
+  margin: 0;
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.header h1 {
+  margin: 6px 0 8px;
+  color: var(--color-text-heading);
+  font-size: 28px;
+}
+.subtitle {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+.headerActions {
+  display: flex;
+  gap: 9px;
+}
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.primaryButton {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+.primaryButton:hover {
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary-hover);
+}
+.primaryButton:active {
+  border-color: var(--color-primary-active);
+  background: var(--color-primary-active);
+}
+.secondaryButton:hover {
+  background: var(--color-bg-hover);
+}
+
+/* Summary cards follow the dashboard metric card style, with role color accents. */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.summaryCard {
+  display: flex;
+  min-width: 0;
+  min-height: 96px;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 16px;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 10px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+.summaryIcon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--color-primary-highlight);
+  color: var(--color-primary);
+}
+.summaryCard div {
+  display: grid;
+  gap: 5px;
+}
+.summaryCard div span {
+  color: var(--color-text-tertiary);
+  font-size: 11px;
+}
+.summaryCard strong {
+  color: var(--color-text-heading);
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.summaryAdmins .summaryIcon {
+  background: var(--color-success-highlight);
+  color: var(--color-success);
+}
+.summaryStaff .summaryIcon {
+  background: #fff0df;
+  color: #a95a17;
+}
+
+.content {
+  display: grid;
+  gap: 20px;
+}
+.panel {
+  overflow: hidden;
+  border: 1px solid var(--color-card-border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+.tableWrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  min-width: 650px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+.nameColumn {
+  width: 34%;
+}
+.emailColumn {
+  width: 32%;
+}
+.roleColumn {
+  width: 19%;
+}
+.actionsColumn {
+  width: 15%;
+}
+.table thead th {
+  height: 48px;
+  padding: 0 24px;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.table tbody tr {
+  transition: background 0.15s;
+}
+.table tbody tr:hover {
+  background: var(--color-surface-hover);
+}
+.table tbody td {
+  height: 64px;
+  padding: 10px 24px;
+  border-top: 1px solid var(--color-border-secondary);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.nameCell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+.avatar {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--color-avatar-purple);
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.nameText {
+  color: var(--color-text-strong);
+  font-weight: 600;
+}
+.roleBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 650;
+}
+.admin {
+  background: #f3e7f2;
+  color: #704066;
+}
+.regular {
+  background: #e4f6ed;
+  color: #08704f;
+}
+.actionsHeader {
+  text-align: right !important;
+}
+.actionsCell {
+  text-align: right;
+  white-space: nowrap;
+}
+.iconButton {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  margin-left: 5px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+}
+.iconButton:hover {
+  border-color: var(--color-primary-highlight);
+  background: var(--color-primary-highlight);
+  color: var(--color-primary);
+}
+.danger {
+  color: var(--color-danger);
+}
+.danger:hover {
+  border-color: var(--color-danger-highlight);
+  background: var(--color-danger-highlight);
+  color: var(--color-danger);
+}
+
+.modalBackdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--color-overlay-heavy);
+  backdrop-filter: blur(2px);
+}
+.modal {
+  display: flex;
+  width: 100%;
+  max-width: 440px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid var(--color-border-primary);
+  border-radius: 14px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-modal);
+}
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+.modalHeader h2 {
+  margin: 0;
+  color: var(--color-text-heading);
+  font-size: 18px;
+}
+.closeButton {
+  border: 0;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  font-size: 25px;
+  line-height: 1;
+  cursor: pointer;
+}
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.field span {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.field input {
+  height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--color-input-border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--color-input-bg);
+  color: var(--color-text-primary);
+  font: inherit;
+}
+.field input::placeholder {
+  color: var(--color-input-placeholder);
+}
+.field input:focus {
+  border-color: var(--color-input-border-focus);
+  box-shadow: 0 0 0 3px rgb(112 76 108 / 12%);
+}
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+.checkboxField input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+}
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (max-width: 720px) {
+  .header {
+    flex-direction: column;
+  }
+  .header h1 {
+    font-size: 24px;
+  }
+  .summary {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .summaryCard {
+    min-height: 80px;
+    gap: 9px;
+    padding: 11px;
+  }
+  .summaryIcon {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+  .summaryCard div span {
+    font-size: 10px;
+  }
+  .summaryCard strong {
+    font-size: 20px;
+  }
+  .table {
+    min-width: 620px;
+  }
+  .actionsCell {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+@media (max-width: 480px) {
+  .summary {
+    grid-template-columns: 1fr;
+  }
+  .summaryCard {
+    min-height: 70px;
+  }
+  .headerActions,
+  .primaryButton {
+    width: 100%;
+  }
+}

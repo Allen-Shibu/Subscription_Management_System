@@ -13,7 +13,7 @@ import styles from "./Sidebar.module.css";
 const navigation = [
   { label: "Dashboard", to: "/dashboard", Icon: LayoutDashboard },
   { label: "Subscriptions", to: "/subscriptions", Icon: RefreshCw },
-  { label: "Customers", to: "/customers", Icon: UsersRound },
+  { label: "Staff", to: "/staff", Icon: UsersRound },
   { label: "Billing & Invoices", to: "/billing", Icon: CreditCard },
   { label: "Analytics", to: "/analytics", Icon: BarChart3 },
   { label: "Settings", to: "/settings", Icon: Settings },

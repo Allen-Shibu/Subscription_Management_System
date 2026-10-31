@@ -4,7 +4,7 @@ import styles from "./DashboardPage.module.css";
 export function DashboardPage() {
   return (
     <div className={styles.dashboard}>
-      <div className={styles.headingRow}>
+      <header className={styles.header}>
         <div>
           <p className={styles.eyebrow}>Financial pulse · Live synced</p>
           <h1>Subscription Performance</h1>
@@ -19,7 +19,13 @@ export function DashboardPage() {
             <Plus size={15} /> New subscription
           </button>
         </div>
-      </div>
+      </header>
+      <section className={styles.content}>
+        <div className={styles.panel}>
+          <h2>Overview</h2>
+          <p>Metrics and charts will appear here.</p>
+        </div>
+      </section>
     </div>
   );
 }

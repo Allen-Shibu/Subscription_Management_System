@@ -3,7 +3,7 @@ import { ClerkLoaded, Show } from "@clerk/react";
 import { AuthPage } from "../../features/auth/pages/AuthPage";
 import { DashboardPage } from "../../features/dashboard/pages/DashboardPage";
 import { BillingsPage } from "../../features/billings/pages/BillingsPage";
-import { CustomersPage } from "../../features/customers/pages/CustomersPage";
+import { StaffPage } from "../../features/staff/pages/StaffPage";
 import { SubscriptionsPage } from "../../features/subscriptions/pages/SubscriptionsPage";
 import { NotFoundPage } from "../../pages/notFoundPage/NotFoundPage";
 import { MainLayout } from "../../shared/components/mainLayout/MainLayout";
@@ -25,7 +25,7 @@ export function RouteManager() {
       >
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/subscriptions" element={<SubscriptionsPage />} />
-        <Route path="/customers" element={<CustomersPage />} />
+        <Route path="/staff" element={<StaffPage />} />
         <Route path="/billing" element={<BillingsPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
