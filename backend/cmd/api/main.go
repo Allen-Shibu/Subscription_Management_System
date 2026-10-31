@@ -3,13 +3,12 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
+	"recur_backend/config"
 	"recur_backend/internals/middleware"
+	"recur_backend/pkg/database"
 
-	"github.com/clerk/clerk-sdk-go/v2"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func setupRouter() *gin.Engine {
@@ -70,25 +69,20 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	// Load .env file if available (ignore error if missing)
-	_ = godotenv.Load()
+	cfg := config.Load()
 
-	secretKey := os.Getenv("CLERK_SECRET_KEY")
-	if secretKey != "" {
-		clerk.SetKey(secretKey)
-		log.Println("[INFO] Clerk secret key configured.")
-	} else {
-		log.Println("[WARN] CLERK_SECRET_KEY is not set. Authenticated endpoints will reject requests.")
+	//setting up db connection
+	pool, err := database.ConnectDatabase(cfg.DatabaseURL)
+	if err != nil {
+		log.Fatal("Database connection failed.")
+		return
 	}
+	defer pool.Close()
 
 	r := setupRouter()
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
-	}
-
-	log.Printf("[INFO] Server starting on port :%s\n", port)
-	if err := r.Run(":" + port); err != nil {
+	log.Printf("[INFO] Server starting on port :%s\n", cfg.Port)
+	if err := r.Run(":" + cfg.Port); err != nil {
 		log.Fatalf("Server failed to start: %v\n", err)
 	}
 }
