@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import { ClerkLoaded, Show } from "@clerk/react";
 import { AuthPage } from "../../features/auth/pages/AuthPage";
 import { DashboardPage } from "../../features/dashboard/pages/DashboardPage";
 import { BillingsPage } from "../../features/billings/pages/BillingsPage";
@@ -13,7 +14,15 @@ export function RouteManager() {
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/auth/*" element={<AuthPage />} />
 
-      <Route element={<MainLayout />}>
+      <Route
+        element={
+          <ClerkLoaded>
+            <Show when="signed-in" fallback={<Navigate to="/auth" replace />}>
+              <MainLayout />
+            </Show>
+          </ClerkLoaded>
+        }
+      >
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/subscriptions" element={<SubscriptionsPage />} />
         <Route path="/customers" element={<CustomersPage />} />

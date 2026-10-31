@@ -52,7 +52,6 @@
 }
 .rangeButton,
 .iconButton,
-.profileButton,
 .menuButton {
   display: inline-flex;
   align-items: center;
@@ -79,56 +78,8 @@
   height: 34px;
   border-radius: 8px;
 }
-.iconButton:hover,
-.profileButton:hover {
+.iconButton:hover {
   background: var(--color-topbar-hover);
-}
-.profileWrap {
-  position: relative;
-}
-.profileButton {
-  gap: 8px;
-  padding: 4px 0 4px 4px;
-  border-radius: 8px;
-  font: inherit;
-  font-size: 11px;
-}
-.avatar {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--color-avatar-purple);
-  color: var(--color-primary);
-  font-size: 10px;
-  font-weight: 700;
-}
-.profileMenu {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  display: grid;
-  width: 210px;
-  gap: 12px;
-  padding: 14px;
-  border: 1px solid var(--color-border-primary);
-  border-radius: 9px;
-  background: var(--color-surface);
-  box-shadow: var(--shadow-large);
-  color: var(--color-text-tertiary);
-  font-size: 11px;
-}
-.profileMenu strong {
-  display: block;
-  margin-top: 4px;
-  color: var(--color-text-strong);
-}
-.profileMenu a {
-  padding-top: 10px;
-  border-top: 1px solid var(--color-border-secondary);
-  color: var(--color-primary);
-  text-decoration: none;
 }
 .menuButton {
   display: none;
@@ -151,9 +102,7 @@
     flex: 1 1 auto;
   }
   .search kbd,
-  .rangeButton,
-  .profileName,
-  .profileButton > svg {
+  .rangeButton {
     display: none;
   }
   .actions {
