@@ -5,17 +5,14 @@ set -euo pipefail
 # Resolve project root (parent directory of migration/)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-# Load .env if present
-if [ -f "$PROJECT_ROOT/.env" ]; then
-    set -a
-    # shellcheck disable=SC1090
-    source "$PROJECT_ROOT/.env"
-    set +a
-elif [ -f ".env" ]; then
-    set -a
-    # shellcheck disable=SC1091
-    source .env
-    set +a
+# Use a local URL only when the environment does not already provide one.
+if [ -z "${DATABASE_URL:-}" ] && [ -f "$PROJECT_ROOT/.env" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+        if [[ "$line" == DATABASE_URL=* ]]; then
+            DATABASE_URL="${line#DATABASE_URL=}"
+            break
+        fi
+    done < "$PROJECT_ROOT/.env"
 fi
 
 # Ensure DATABASE_URL is available

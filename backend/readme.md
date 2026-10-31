@@ -40,6 +40,18 @@ Migrations are tracked in `schema_migrations`, so `make migrate-up` is safe to r
 
 The server starts by default on `http://localhost:3000`.
 
+## Render web service
+
+For the repository's `backend/` root directory, set:
+
+| Setting | Value |
+|---|---|
+| Build command | `go build -tags netgo -ldflags '-s -w' -o app ./cmd/api` |
+| Start command | `./app` |
+| Health check path | `/health` |
+
+Set `DATABASE_URL` to the Neon connection string, `CLERK_SECRET_KEY` to the Clerk secret, `CORS_ALLOWED_ORIGINS` to the exact HTTPS origin of the deployed frontend, `GIN_MODE=release`, and `PORT=10000`. Configure `SMTP_HOST`, `SMTP_FROM`, and SMTP credentials if invoice email delivery is needed. Render supplies these values as environment variables; do not upload `.env`. The Neon schema migrations have to be applied separately before the API can serve database requests.
+
 ## Roles
 
 Roles live in Clerk; the local `users.role` column is only a queryable copy.

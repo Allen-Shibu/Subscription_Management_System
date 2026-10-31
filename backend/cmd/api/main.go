@@ -98,7 +98,7 @@ func setupRouter(pool *pgxpool.Pool, mailer email.Sender, allowedOrigins string)
 }
 
 func main() {
-	// Load required .env file.
+	// Load settings from the environment or a local .env file.
 	cfg := config.Load()
 
 	if cfg.ClerkSecretKey == "" {
