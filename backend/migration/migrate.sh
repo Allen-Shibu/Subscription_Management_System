@@ -1,51 +1,110 @@
 #!/usr/bin/env bash
-# Applies or rolls back migration/*_up.sql / *_down.sql against DATABASE_URL.
-# Applied versions are tracked in schema_migrations, so re-running is safe.
+
 set -euo pipefail
 
-cd "$(dirname "$0")/.."
+# Resolve project root (parent directory of scripts/)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-if [[ -f .env ]]; then
-	set -a
-	# shellcheck disable=SC1091
-	source .env
-	set +a
+# Check if golang-migrate CLI is installed
+if ! command -v migrate >/dev/null 2>&1; then
+    echo "Error: golang-migrate CLI is not installed."
+    exit 1
 fi
 
-if [[ -z "${DATABASE_URL:-}" ]]; then
-	echo "DATABASE_URL is not set" >&2
-	exit 1
+# Check if .env exists in project root
+if [ ! -f "$PROJECT_ROOT/.env" ]; then
+    echo "Error: .env file not found at $PROJECT_ROOT/.env"
+    exit 1
 fi
 
-direction="${1:-up}"
-psql "${DATABASE_URL}" -v ON_ERROR_STOP=1 -q \
-	-c "CREATE TABLE IF NOT EXISTS schema_migrations (version TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW())"
+# Load environment variables
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
 
-applied() {
-	psql "${DATABASE_URL}" -tAq -c "SELECT 1 FROM schema_migrations WHERE version = '$1'"
-}
+# Ensure DATABASE_URL is available
+if [ -z "${DATABASE_URL:-}" ]; then
+    echo "Error: DATABASE_URL is not set in .env."
+    exit 1
+fi
 
-case "$direction" in
-up)
-	for file in migration/*_up.sql; do
-		version="$(basename "$file" _up.sql)"
-		[[ -n "$(applied "$version")" ]] && continue
-		echo "applying $version"
-		{ cat "$file"; printf "\nINSERT INTO schema_migrations (version) VALUES ('%s');\n" "$version"; } |
-			psql "${DATABASE_URL}" -v ON_ERROR_STOP=1 -q -1
-	done
-	;;
-down)
-	for file in $(ls -r migration/*_down.sql); do
-		version="$(basename "$file" _down.sql)"
-		[[ -z "$(applied "$version")" ]] && continue
-		echo "reverting $version"
-		{ cat "$file"; printf "\nDELETE FROM schema_migrations WHERE version = '%s';\n" "$version"; } |
-			psql "${DATABASE_URL}" -v ON_ERROR_STOP=1 -q -1
-	done
-	;;
-*)
-	echo "usage: $0 [up|down]" >&2
-	exit 1
-	;;
+# Migrations directory
+MIGRATIONS_DIR="$PROJECT_ROOT/migrations"
+
+command="${1:-}"
+arg="${2:-}"
+
+case "$command" in
+    up)
+        migrate \
+            -path "$MIGRATIONS_DIR" \
+            -database "$DATABASE_URL" \
+            up
+        ;;
+
+    down)
+        count="${arg:-1}"
+
+        read -rp "Roll back $count migration(s)? [y/N] " confirm
+
+        if [[ "$confirm" =~ ^[Yy]$ ]]; then
+            migrate \
+                -path "$MIGRATIONS_DIR" \
+                -database "$DATABASE_URL" \
+                down "$count"
+        else
+            echo "Rollback cancelled."
+        fi
+        ;;
+
+    create)
+        if [ -z "$arg" ]; then
+            echo "Error: Migration name is required."
+            echo "Usage: ./scripts/migrate.sh create <migration_name>"
+            exit 1
+        fi
+
+        migrate create \
+            -ext sql \
+            -dir "$MIGRATIONS_DIR" \
+            -seq \
+            "$arg"
+        ;;
+
+    force)
+        if [ -z "$arg" ]; then
+            echo "Error: Migration version is required."
+            echo "Usage: ./scripts/migrate.sh force <version>"
+            exit 1
+        fi
+
+        migrate \
+            -path "$MIGRATIONS_DIR" \
+            -database "$DATABASE_URL" \
+            force "$arg"
+        ;;
+
+    *)
+        cat <<EOF
+Usage:
+
+  ./scripts/migrate.sh up
+
+      Apply all pending migrations.
+
+  ./scripts/migrate.sh down [count]
+
+      Roll back the last migration (default: 1).
+
+  ./scripts/migrate.sh create <migration_name>
+
+      Create a new sequential migration.
+
+  ./scripts/migrate.sh force <version>
+
+      Force the migration version (use only to recover from a dirty state).
+EOF
+        exit 1
+        ;;
 esac

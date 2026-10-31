@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { ChevronDown, ChevronRight, FileText, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, FileText, Search, Receipt } from "lucide-react";
 import type { Subscription, SubscriptionStatus } from "../types";
 import styles from "../pages/SubscriptionsPage.module.css";
 
@@ -8,9 +8,9 @@ const money = (amount: number) => new Intl.NumberFormat("en-US", { style: "curre
 const subtotal = (item: Subscription) => item.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice, 0);
 const total = (item: Subscription) => item.lines.reduce((sum, line) => sum + line.quantity * line.unitPrice * (1 + line.taxRate / 100), 0);
 
-type Props = { subscriptions: Subscription[] };
+type Props = { subscriptions: Subscription[]; onIssueInvoice?: (id: string) => void; issuing?: boolean };
 
-export function SubscriptionTable({ subscriptions }: Props) {
+export function SubscriptionTable({ subscriptions, onIssueInvoice, issuing }: Props) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<(typeof statuses)[number]>("All");
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export function SubscriptionTable({ subscriptions }: Props) {
                 <div className={styles.lineHeader}><span>Product</span><span>Qty</span><span>Unit price</span><span>Tax</span><span>Amount</span></div>
                 {item.lines.map(line => <div className={styles.lineRow} key={line.product}><span>{line.product}</span><span>{line.quantity}</span><span>{money(line.unitPrice)}</span><span>{line.taxRate}%</span><strong>{money(line.quantity * line.unitPrice * (1 + line.taxRate / 100))}</strong></div>)}
               </div>
-              <div className={styles.totals}><div><span>Subtotal</span><strong>{money(subtotal(item))}</strong></div><div><span>Taxes</span><strong>{money(total(item) - subtotal(item))}</strong></div><div className={styles.grandTotal}><span>Total</span><strong>{money(total(item))}</strong></div></div>
+              <div className={styles.totals}><div><span>Subtotal</span><strong>{money(subtotal(item))}</strong></div><div><span>Taxes</span><strong>{money(total(item) - subtotal(item))}</strong></div><div className={styles.grandTotal}><span>Total</span><strong>{money(total(item))}</strong></div>{onIssueInvoice && item.status === "Active" && <button type="button" className={styles.issueButton} disabled={issuing} onClick={() => onIssueInvoice(item.id)}><Receipt size={14}/>{issuing ? "Issuing…" : "Issue invoice"}</button>}</div>
             </div>
           </td></tr>}
         </Fragment>)}</tbody>

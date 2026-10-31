@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import styles from "./CatalogPage.module.css";
+import { RevenueRulesPage } from "./RevenueRulesPage";
 
 type Field = { key: string; label: string; type?: "number" | "date" | "checkbox" | "textarea" | "select"; options?: string[]; required?: boolean };
 type RecordValue = string | boolean;
@@ -51,6 +52,7 @@ const emptyRow = (fields: Field[]): Row => Object.fromEntries([
 ]) as Row;
 
 export function CatalogPage({ section }: { section: keyof typeof configs }) {
+  if (section === "taxes" || section === "discounts") return <RevenueRulesPage kind={section} />;
   const config = configs[section];
   const [rows, setRows] = useState(config.rows);
   const [form, setForm] = useState<Row | null>(null);
