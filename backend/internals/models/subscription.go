@@ -42,6 +42,7 @@ type Subscription struct {
 	CreatedBy          string     `json:"createdBy"`
 	CreatedAt          time.Time  `json:"createdAt"`
 	UpdatedAt          time.Time  `json:"updatedAt"`
+	TaxRuleID          *int64     `json:"taxRuleId,omitempty"`
 }
 
 // Invoice is one billing period of a subscription. EmailSentAt is set once
@@ -55,7 +56,10 @@ type Invoice struct {
 	PeriodEnd      time.Time  `json:"periodEnd"`
 	SubtotalCents  int64      `json:"subtotalCents"`
 	DiscountCents  int64      `json:"discountCents"`
+	TaxCents       int64      `json:"taxCents"`
 	TotalCents     int64      `json:"totalCents"`
+	TaxRateBps     int        `json:"taxRateBps"`
+	TaxRuleID      *int64     `json:"taxRuleId,omitempty"`
 	IssuedAt       *time.Time `json:"issuedAt,omitempty"`
 	DueAt          *time.Time `json:"dueAt,omitempty"`
 	PaidAt         *time.Time `json:"paidAt,omitempty"`

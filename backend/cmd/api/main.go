@@ -78,7 +78,12 @@ func setupRouter(pool *pgxpool.Pool) *gin.Engine {
 		productHandler.RegisterRoutes(api, admin)
 
 		subscriptionHandler := handlers.NewSubscriptionHandler(repository.NewSubscriptionRepository(pool))
-		subscriptionHandler.RegisterRoutes(staff)
+		subscriptionHandler.RegisterRoutes(staff, admin)
+
+		taxRuleHandler := handlers.NewTaxRuleHandler(repository.NewTaxRuleRepository(pool))
+		taxRuleHandler.RegisterRoutes(api, admin)
+
+		handlers.RegisterStaffRoutes(admin)
 	}
 
 	return r

@@ -48,10 +48,11 @@ Organization roles (`org:admin`, `org:staff`, `org:customer`) are accepted too.
 
 | Table | Purpose |
 |---|---|
-| `subscriptions` | Recurring subscription for a customer on a product tier. Price, currency and interval are snapshotted from the variant at creation. Supports `cancel_at_period_end`, `canceled_at`, `ended_at` and status `active` / `trialing` / `past_due` / `canceled` / `expired`. |
-| `invoices` | One row per billing period (`period_start` is unique per subscription). Auto number `INV-000001`, status `draft` / `open` / `paid` / `void` / `uncollectible`, plus `email_sent_at` for delivery tracking. `total_cents = subtotal_cents - discount_cents`. |
+| `subscriptions` | Recurring subscription for a customer on a product tier. Price, currency and interval are snapshotted from the variant at creation. Supports `cancel_at_period_end`, `canceled_at`, `ended_at` and status `active` / `trialing` / `past_due` / `canceled` / `expired`. Admins can attach a `tax_rule_id`. |
+| `invoices` | One row per billing period (`period_start` is unique per subscription). Auto number `INV-000001`, status `draft` / `open` / `paid` / `void` / `uncollectible`, plus `email_sent_at` for delivery tracking. Tax rate and amount are snapshotted. `total_cents = subtotal_cents - discount_cents + tax_cents`. |
 | `subscription_discounts` | One-time discounts. `applied_invoice_id` stays `NULL` until an invoice consumes it. |
 | `refunds` | Money returned against a paid invoice. |
+| `tax_rules` | Admin-defined `name` + `rate_bps` (basis points, 1800 = 18%). |
 
 Customers are rows in `users`, so a subscription references `users.id`.
 
@@ -101,8 +102,29 @@ All of these require the staff or admin role.
 | `POST` | `/api/staff/invoices/:invoiceID/pay` | Mark an open invoice as paid. |
 | `POST` | `/api/staff/invoices/:invoiceID/refunds` | Refund a paid invoice (`amountCents`, `reason`), capped at the unrefunded total. |
 | `GET` | `/api/staff/invoices/:invoiceID/refunds` | List refunds. |
+| `PUT` | `/api/admin/subscriptions/:id/tax-rule` | Admin only. `{"taxRuleId": 1}` attaches a tax rule; `null` clears it. |
 
-Invoices are numbered automatically (`INV-000001`). Emailing them is not implemented yet; `emailSentAt` stays `null`.
+Invoices are numbered automatically (`INV-000001`). Issuing one applies the subscription's tax rule: tax is charged on `subtotal - discount`, and the rate is snapshotted on the invoice. Emailing invoices is not implemented yet; `emailSentAt` stays `null`.
+
+## Tax rules
+
+Admins create and change rules; any signed-in user can read them.
+
+| Method | Endpoint | Auth Required |
+|---|---|---|
+| `POST` | `/api/admin/tax-rules` | Admin |
+| `PUT` | `/api/admin/tax-rules/:id` | Admin |
+| `DELETE` | `/api/admin/tax-rules/:id` | Admin |
+| `GET` | `/api/tax-rules` | Any signed-in user |
+| `GET` | `/api/tax-rules/:id` | Any signed-in user |
+
+```json
+{ "name": "GST 18%", "rateBps": 1800, "active": true }
+```
+
+## Staff accounts
+
+`POST /api/admin/staff` with `{"email":"staff@example.com"}` sends a Clerk invitation carrying `public_metadata.role = "staff"`. The invitee sets their own password, so no credentials pass through this API. Admin role required.
 
 ## Example
 

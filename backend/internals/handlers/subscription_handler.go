@@ -203,6 +203,35 @@ func (h *SubscriptionHandler) UpdateSubscription(c *gin.Context) {
 	c.JSON(http.StatusOK, updated)
 }
 
+type taxRuleAssignmentInput struct {
+	TaxRuleID *int64 `json:"taxRuleId"`
+}
+
+// SetSubscriptionTaxRule is admin-only and clears the rule when taxRuleId is null.
+func (h *SubscriptionHandler) SetSubscriptionTaxRule(c *gin.Context) {
+	id, ok := parseID(c, "id")
+	if !ok {
+		return
+	}
+
+	var in taxRuleAssignmentInput
+	if err := c.ShouldBindJSON(&in); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+	if in.TaxRuleID != nil && *in.TaxRuleID <= 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "taxRuleId must be a positive id or null"})
+		return
+	}
+
+	subscription, err := h.repo.SetSubscriptionTaxRule(c.Request.Context(), id, in.TaxRuleID)
+	if err != nil {
+		respondDBError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, subscription)
+}
+
 func (h *SubscriptionHandler) CancelSubscription(c *gin.Context) {
 	id, ok := parseID(c, "id")
 	if !ok {

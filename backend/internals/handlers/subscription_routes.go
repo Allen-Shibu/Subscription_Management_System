@@ -3,7 +3,7 @@ package handlers
 import "github.com/gin-gonic/gin"
 
 // RegisterRoutes mounts all subscription endpoints on the staff/admin group.
-func (h *SubscriptionHandler) RegisterRoutes(staff *gin.RouterGroup) {
+func (h *SubscriptionHandler) RegisterRoutes(staff, admin *gin.RouterGroup) {
 	staff.POST("/subscriptions", h.CreateSubscription)
 	staff.GET("/subscriptions", h.ListSubscriptions)
 	staff.GET("/subscriptions/:id", h.GetSubscription)
@@ -17,4 +17,6 @@ func (h *SubscriptionHandler) RegisterRoutes(staff *gin.RouterGroup) {
 	staff.POST("/invoices/:invoiceID/pay", h.PayInvoice)
 	staff.POST("/invoices/:invoiceID/refunds", h.CreateRefund)
 	staff.GET("/invoices/:invoiceID/refunds", h.ListRefunds)
+
+	admin.PUT("/subscriptions/:id/tax-rule", h.SetSubscriptionTaxRule)
 }

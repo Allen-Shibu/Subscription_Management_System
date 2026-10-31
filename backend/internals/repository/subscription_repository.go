@@ -27,11 +27,11 @@ func NewSubscriptionRepository(db *pgxpool.Pool) *SubscriptionRepository {
 
 const subscriptionColumns = `id, customer_id, variant_id, status, quantity, unit_price_cents, currency,
 	billing_interval, current_period_start, current_period_end, cancel_at_period_end,
-	canceled_at, ended_at, created_by, created_at, updated_at`
+	canceled_at, ended_at, created_by, created_at, updated_at, tax_rule_id`
 
 const invoiceColumns = `id, invoice_number, subscription_id, status, period_start, period_end,
 	subtotal_cents, discount_cents, total_cents, issued_at, due_at, paid_at, email_sent_at,
-	created_by, created_at`
+	created_by, created_at, tax_rule_id, tax_rate_bps, tax_cents`
 
 const discountColumns = `id, subscription_id, amount_cents, reason, applied_invoice_id, created_by, created_at`
 
@@ -42,7 +42,7 @@ func scanSubscription(row pgx.Row) (models.Subscription, error) {
 	err := row.Scan(&s.ID, &s.CustomerID, &s.VariantID, &s.Status, &s.Quantity,
 		&s.UnitPriceCents, &s.Currency, &s.BillingInterval, &s.CurrentPeriodStart,
 		&s.CurrentPeriodEnd, &s.CancelAtPeriodEnd, &s.CanceledAt, &s.EndedAt,
-		&s.CreatedBy, &s.CreatedAt, &s.UpdatedAt)
+		&s.CreatedBy, &s.CreatedAt, &s.UpdatedAt, &s.TaxRuleID)
 	return s, err
 }
 
@@ -50,7 +50,8 @@ func scanInvoice(row pgx.Row) (models.Invoice, error) {
 	var i models.Invoice
 	err := row.Scan(&i.ID, &i.InvoiceNumber, &i.SubscriptionID, &i.Status, &i.PeriodStart,
 		&i.PeriodEnd, &i.SubtotalCents, &i.DiscountCents, &i.TotalCents, &i.IssuedAt,
-		&i.DueAt, &i.PaidAt, &i.EmailSentAt, &i.CreatedBy, &i.CreatedAt)
+		&i.DueAt, &i.PaidAt, &i.EmailSentAt, &i.CreatedBy, &i.CreatedAt,
+		&i.TaxRuleID, &i.TaxRateBps, &i.TaxCents)
 	return i, err
 }
 
@@ -141,6 +142,16 @@ func (r *SubscriptionRepository) UpdateSubscription(ctx context.Context, s model
 	return scanSubscription(row)
 }
 
+// SetSubscriptionTaxRule attaches or clears the admin-defined tax rule.
+func (r *SubscriptionRepository) SetSubscriptionTaxRule(ctx context.Context, id int64, taxRuleID *int64) (models.Subscription, error) {
+	row := r.db.QueryRow(ctx, `
+		UPDATE subscriptions
+		SET tax_rule_id = $2, updated_at = NOW()
+		WHERE id = $1
+		RETURNING `+subscriptionColumns, id, taxRuleID)
+	return scanSubscription(row)
+}
+
 // CancelSubscription either flags cancellation at period end or cancels now.
 func (r *SubscriptionRepository) CancelSubscription(ctx context.Context, id int64, atPeriodEnd bool) (models.Subscription, error) {
 	row := r.db.QueryRow(ctx, `
@@ -213,13 +224,27 @@ func (r *SubscriptionRepository) CreateInvoice(ctx context.Context, subscription
 		discount = subtotal
 	}
 
+	taxable := subtotal - discount
+	var taxRuleID *int64
+	var taxRate int
+	var taxCents int64
+	if sub.TaxRuleID != nil {
+		if err := tx.QueryRow(ctx,
+			`SELECT rate_bps FROM tax_rules WHERE id = $1`, *sub.TaxRuleID).Scan(&taxRate); err != nil {
+			return models.Invoice{}, err
+		}
+		taxRuleID = sub.TaxRuleID
+		taxCents = taxCentsFor(taxable, taxRate)
+	}
+	total := taxable + taxCents
+
 	invoice, err := scanInvoice(tx.QueryRow(ctx, `
 		INSERT INTO invoices (subscription_id, status, period_start, period_end, subtotal_cents,
-			discount_cents, total_cents, issued_at, due_at, created_by)
-		VALUES ($1, 'open', $2, $3, $4, $5, $6, NOW(), $3, $7)
+			discount_cents, tax_rule_id, tax_rate_bps, tax_cents, total_cents, issued_at, due_at, created_by)
+		VALUES ($1, 'open', $2, $3, $4, $5, $6, $7, $8, $9, NOW(), $3, $10)
 		RETURNING `+invoiceColumns,
 		subscriptionID, sub.CurrentPeriodStart, sub.CurrentPeriodEnd,
-		subtotal, discount, subtotal-discount, createdBy))
+		subtotal, discount, taxRuleID, taxRate, taxCents, total, createdBy))
 	if err != nil {
 		return models.Invoice{}, err
 	}
@@ -352,4 +377,12 @@ func (r *SubscriptionRepository) ListRefunds(ctx context.Context, invoiceID int6
 		refunds = append(refunds, rf)
 	}
 	return refunds, rows.Err()
+}
+
+// taxCentsFor rounds half up.
+func taxCentsFor(taxable int64, rateBps int) int64 {
+	if taxable <= 0 || rateBps <= 0 {
+		return 0
+	}
+	return (taxable*int64(rateBps) + 5000) / 10000
 }
