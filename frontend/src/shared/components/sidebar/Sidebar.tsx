@@ -20,8 +20,8 @@ const navigation = [
   { label: "Billing & Invoices", to: "/billing", Icon: CreditCard },
 ];
 const adminNavigation = [
-  { label: "Products", to: "/products", Icon: Boxes },
-  { label: "Plans", to: "/plans", Icon: CalendarClock },
+  { label: "Products", to: "/admin/products", Icon: Boxes },
+  { label: "Plans", to: "/admin/plans", Icon: CalendarClock },
   { label: "Taxes", to: "/taxes", Icon: ReceiptText },
   { label: "Discounts", to: "/discounts", Icon: Percent },
   { label: "Staff", to: "/staff", Icon: UsersRound },

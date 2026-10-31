@@ -8,33 +8,6 @@ type Row = { id: string; [key: string]: RecordValue };
 type Config = { title: string; singular: string; description: string; fields: Field[]; rows: Row[] };
 
 const configs: Record<string, Config> = {
-  products: {
-    title: "Products", singular: "Product", description: "Products, prices, costs, and variants.",
-    fields: [
-      { key: "name", label: "Name", required: true },
-      { key: "type", label: "Type", type: "select", options: ["Service", "Physical", "Digital"] },
-      { key: "salesPrice", label: "Sales price", type: "number", required: true },
-      { key: "costPrice", label: "Cost price", type: "number", required: true },
-      { key: "notes", label: "Notes", type: "textarea" },
-      { key: "variants", label: "Variants (one per line, e.g. Odoo +560)", type: "textarea" },
-    ],
-    rows: [{ id: "product-1", name: "Cloud Suite", type: "Service", salesPrice: "2400", costPrice: "900", notes: "Annual support included", variants: "Odoo +560\nPriority support +300" }],
-  },
-  plans: {
-    title: "Plans", singular: "Plan", description: "Billing terms and subscription controls.",
-    fields: [
-      { key: "name", label: "Name", required: true },
-      { key: "price", label: "Price", type: "number", required: true },
-      { key: "period", label: "Billing period", type: "select", options: ["Monthly", "Quarterly", "Yearly"] },
-      { key: "minQuantity", label: "Minimum quantity", type: "number", required: true },
-      { key: "availableFrom", label: "Available from", type: "date" },
-      { key: "availableUntil", label: "Available until", type: "date" },
-      { key: "canClose", label: "Allow close", type: "checkbox" },
-      { key: "canPause", label: "Allow pause", type: "checkbox" },
-      { key: "canRenew", label: "Allow renew", type: "checkbox" },
-    ],
-    rows: [{ id: "plan-1", name: "Growth", price: "2400", period: "Monthly", minQuantity: "1", availableFrom: "2026-01-01", availableUntil: "", canClose: true, canPause: true, canRenew: true }],
-  },
   taxes: {
     title: "Taxes", singular: "Tax", description: "Rules applied to invoices.",
     fields: [

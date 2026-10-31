@@ -1,0 +1,77 @@
+.page { display: grid; gap: 20px; }
+.header { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+.eyebrow { margin: 0; color: var(--color-primary); font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.header h1 { margin: 6px 0 8px; color: var(--color-text-heading); font-size: 28px; }
+.header p:not(.eyebrow) { margin: 0; color: var(--color-text-secondary); font-size: 14px; }
+.primary { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 38px; padding: 9px 14px; border: 0; border-radius: 8px; background: var(--color-primary); color: white; font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; }
+.primary:hover { background: var(--color-primary-hover); }
+.primary:disabled { opacity: .6; cursor: wait; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.search { display: flex; align-items: center; gap: 8px; width: min(340px, 100%); padding: 0 11px; border: 1px solid var(--color-input-border); border-radius: 8px; background: var(--color-surface); color: var(--color-text-tertiary); }
+.search input { width: 100%; height: 40px; border: 0; outline: 0; background: transparent; color: var(--color-text-primary); font: inherit; font-size: 13px; }
+.pageSize { display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 12px; white-space: nowrap; }
+.pageSize select { padding: 8px; border: 1px solid var(--color-input-border); border-radius: 7px; background: var(--color-surface); color: var(--color-text-primary); }
+.tableWrap, .formCard { overflow: hidden; border: 1px solid var(--color-border-primary); border-radius: 10px; background: var(--color-surface); box-shadow: var(--shadow-card); }
+.tableWrap { overflow-x: auto; }
+.table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+.table th { padding: 14px 16px; background: var(--color-bg-secondary); color: var(--color-text-secondary); font-size: 11px; font-weight: 600; }
+.table td { padding: 15px 16px; border-top: 1px solid var(--color-border-primary); color: var(--color-text-primary); font-size: 12px; }
+.table .name { font-weight: 650; color: var(--color-text-heading); }
+.badge { display: inline-block; padding: 4px 8px; border-radius: 6px; background: var(--color-primary-highlight); color: var(--color-primary); font-size: 11px; font-weight: 600; }
+.flags { display: flex; flex-wrap: wrap; gap: 4px; min-width: 130px; }
+.actions { display: flex; gap: 5px; }
+.actions :is(a, button), .iconButton { display: grid; width: 30px; height: 30px; place-items: center; border: 0; border-radius: 6px; background: var(--color-bg-secondary); color: var(--color-text-secondary); cursor: pointer; }
+.actions :is(a, button):hover, .iconButton:hover { color: var(--color-primary); }
+.pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--color-text-tertiary); font-size: 12px; }
+.pagination div { display: flex; align-items: center; gap: 12px; }
+.pagination button, .empty button { padding: 7px 10px; border: 1px solid var(--color-input-border); border-radius: 7px; background: var(--color-surface); color: var(--color-text-secondary); cursor: pointer; }
+.pagination button:disabled { opacity: .5; cursor: default; }
+.empty { display: grid; justify-items: center; gap: 8px; padding: 50px 20px; text-align: center; color: var(--color-text-secondary); }
+.empty h2 { margin: 0; font-size: 17px; color: var(--color-text-heading); }
+.empty p { margin: 0; font-size: 13px; }
+.skeleton { display: grid; gap: 12px; padding: 20px; }
+.skeleton span { display: block; height: 34px; border-radius: 6px; background: linear-gradient(90deg, var(--color-bg-secondary), var(--color-primary-highlight), var(--color-bg-secondary)); background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.error { padding: 12px 14px; border-radius: 8px; background: var(--color-error-highlight); color: var(--color-error); font-size: 13px; }
+.toast { position: fixed; z-index: 40; right: 24px; bottom: 24px; display: flex; gap: 16px; align-items: center; padding: 12px 16px; border-radius: 9px; background: var(--color-text-heading); color: white; box-shadow: var(--shadow-large); font-size: 13px; }
+.toast button { border: 0; background: transparent; color: white; cursor: pointer; font-size: 19px; }
+.dialog { width: min(420px, calc(100% - 32px)); padding: 24px; border: 1px solid var(--color-border-primary); border-radius: 12px; box-shadow: var(--shadow-large); }
+.dialog::backdrop { background: var(--color-overlay-heavy); }
+.dialog h2 { margin: 0 0 8px; font-size: 19px; }
+.dialog p { margin: 0 0 20px; color: var(--color-text-secondary); font-size: 13px; }
+.dialogActions { display: flex; justify-content: end; gap: 8px; }
+.dialogActions button { padding: 9px 13px; border: 1px solid var(--color-input-border); border-radius: 7px; background: var(--color-surface); color: var(--color-text-primary); cursor: pointer; }
+.dialogActions .dangerButton { border-color: var(--color-error); background: var(--color-error); color: white; }
+.back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 8px; color: var(--color-primary); font-size: 12px; text-decoration: none; }
+.form { display: grid; gap: 16px; }
+.formCard { padding: 22px; }
+.formCard h2 { margin: 0 0 18px; color: var(--color-text-heading); font-size: 17px; }
+.formGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.formGrid label, .variantFields label { display: grid; gap: 6px; align-content: start; color: var(--color-text-secondary); font-size: 12px; font-weight: 600; }
+.formGrid :is(input, select, textarea), .variantFields input { width: 100%; min-width: 0; padding: 10px; border: 1px solid var(--color-input-border); border-radius: 7px; background: var(--color-surface); color: var(--color-text-primary); font: inherit; }
+.formGrid textarea { resize: vertical; }
+.formGrid .wide, .warning { grid-column: 1 / -1; }
+.form :is(input, select, textarea)[aria-invalid="true"] { border-color: var(--color-error); }
+.form label small { min-height: 14px; color: var(--color-error); font-size: 11px; font-weight: 400; }
+.warning { margin: 0; padding: 10px; border-radius: 7px; background: var(--color-warning-highlight); color: var(--color-warning); font-size: 12px; }
+.sectionHead { display: flex; justify-content: space-between; gap: 12px; }
+.sectionHead h2 { margin-bottom: 4px; }
+.sectionHead p, .muted { margin: 0; color: var(--color-text-tertiary); font-size: 12px; }
+.sectionHead button { display: inline-flex; align-items: center; gap: 5px; align-self: start; padding: 8px 10px; border: 1px solid var(--color-input-border); border-radius: 7px; background: white; color: var(--color-primary); cursor: pointer; }
+.variantList { display: grid; gap: 12px; margin-top: 18px; }
+.variant { padding: 14px; border: 1px solid var(--color-border-primary); border-radius: 8px; background: var(--color-bg-tertiary); }
+.variantFields { display: grid; grid-template-columns: 1fr 1fr 130px 32px; gap: 10px; align-items: start; }
+.variantFields .iconButton { margin-top: 22px; }
+.preview { margin: 8px 0 0; color: var(--color-text-secondary); font-size: 12px; }
+.preview strong { color: var(--color-primary); }
+.checkList { display: grid; gap: 13px; }
+.checkList label { display: flex; gap: 10px; align-items: start; }
+.checkList input { margin-top: 4px; accent-color: var(--color-primary); }
+.checkList span { display: grid; gap: 3px; }
+.checkList strong { color: var(--color-text-primary); font-size: 13px; }
+.checkList small { min-height: 0; color: var(--color-text-tertiary) !important; font-size: 11px; }
+.formActions { display: flex; justify-content: end; align-items: center; gap: 10px; }
+.formActions a { padding: 9px 14px; color: var(--color-text-secondary); font-size: 13px; text-decoration: none; }
+:is(button, a, input, select, textarea):focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+@media (max-width: 760px) { .header { flex-direction: column; } .formGrid { grid-template-columns: 1fr; } .variantFields { grid-template-columns: 1fr 1fr; } .variantFields .iconButton { margin-top: 0; } }
+@media (prefers-reduced-motion: reduce) { .skeleton span { animation: none; } }
