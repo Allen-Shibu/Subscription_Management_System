@@ -7,7 +7,9 @@ import (
 	"recur_backend/config"
 	"recur_backend/internals/middleware"
 	"recur_backend/pkg/database"
+	"recur_backend/pkg/types"
 
+	"github.com/clerk/clerk-sdk-go/v2"
 	"github.com/gin-gonic/gin"
 )
 
@@ -53,7 +55,7 @@ func setupRouter() *gin.Engine {
 
 		// Admin-only sub-group example
 		admin := api.Group("/admin")
-		admin.Use(middleware.RequireRole("admin"))
+		admin.Use(middleware.RequireRole(types.RoleAdmin))
 		{
 			admin.GET("/ping", func(c *gin.Context) {
 				c.JSON(http.StatusOK, gin.H{
@@ -70,6 +72,11 @@ func setupRouter() *gin.Engine {
 func main() {
 	// Load .env file if available (ignore error if missing)
 	cfg := config.Load()
+
+	if cfg.ClerkSecretKey == "" {
+		log.Fatal("CLERK_SECRET_KEY is required")
+	}
+	clerk.SetKey(cfg.ClerkSecretKey)
 
 	//setting up db connection
 	pool, err := database.ConnectDatabase(cfg.DatabaseURL)

@@ -8,31 +8,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// RequireRole creates a Gin middleware that checks for a specific Clerk role.
+// RequireRole allows the request through only if the Clerk session claims
+// carry the given role, either as an organization role ("org:admin") or as
+// a custom "role" claim.
 func RequireRole(role string) gin.HandlerFunc {
+	want := normalizeRole(role)
+
 	return func(c *gin.Context) {
-		// Retrieve the claims that your ClerkAuth middleware already validated.
 		claims, ok := clerk.SessionClaimsFromContext(c.Request.Context())
 		if !ok || claims == nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 			return
 		}
 
-		// Check role in organization role (e.g. "admin", "org:admin") or custom claims.
-		hasRole := claims.HasRole(role) ||
-			claims.ActiveOrganizationRole == role ||
-			claims.ActiveOrganizationRole == "org:"+role ||
-			(strings.HasPrefix(role, "org:") && claims.ActiveOrganizationRole == strings.TrimPrefix(role, "org:"))
-
-		if !hasRole && claims.Custom != nil {
-			if m, ok := claims.Custom.(map[string]any); ok {
-				if r, ok := m["role"].(string); ok && (r == role || r == "org:"+role) {
-					hasRole = true
-				}
-			}
-		}
-
-		if !hasRole {
+		if !hasRole(claims, want) {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"error": "insufficient permissions",
 			})
@@ -41,4 +30,21 @@ func RequireRole(role string) gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+
+func hasRole(claims *clerk.SessionClaims, want string) bool {
+	if normalizeRole(claims.ActiveOrganizationRole) == want {
+		return true
+	}
+
+	custom, ok := claims.Custom.(map[string]any)
+	if !ok {
+		return false
+	}
+	role, ok := custom["role"].(string)
+	return ok && normalizeRole(role) == want
+}
+
+func normalizeRole(role string) string {
+	return strings.ToLower(strings.TrimPrefix(role, "org:"))
 }

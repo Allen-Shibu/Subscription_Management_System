@@ -19,7 +19,7 @@ func Load() *Config {
 		DatabaseURL:         os.Getenv("DATABASE_URL"),
 		Port:                os.Getenv("PORT"),
 		ClerkSecretKey:      os.Getenv("CLERK_SECRET_KEY"),
-		ClerkPublishableKey: os.Getenv("CLERK_PUBLISHER_KEY"),
+		ClerkPublishableKey: os.Getenv("CLERK_PUBLISHABLE_KEY"),
 		DevelopmentMode:     os.Getenv("DEVELOPMENT_MODE"),
 	}
 
