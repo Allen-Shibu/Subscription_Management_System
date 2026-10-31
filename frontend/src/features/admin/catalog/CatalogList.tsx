@@ -16,7 +16,7 @@ const today = () => {
   return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, "0")}-${String(value.getDate()).padStart(2, "0")}`;
 };
 
-export function CatalogList({ kind }: { kind: "products" | "plans" }) {
+export function CatalogList({ kind, readonly = false }: { kind: "products" | "plans"; readonly?: boolean }) {
   const { getToken } = useAuth();
   const queryClient = useQueryClient();
   const { params, search, setSearch, setPage, setPageSize } = useListControls();
@@ -50,9 +50,9 @@ export function CatalogList({ kind }: { kind: "products" | "plans" }) {
   const totalPages = Math.max(1, Math.ceil((list.data?.total ?? 0) / params.pageSize));
 
   return <div className={styles.page}>
-    <header className={styles.header}><div><p className={styles.eyebrow}>Admin</p><h1>{isProduct ? "Products" : "Plans"}</h1>
-      <p>Manage {kind} and their billing details.</p></div>
-      <Link className={styles.primary} to={`/admin/${kind}/new`}><Plus size={16} /> Add {singular}</Link></header>
+    <header className={styles.header}><div><p className={styles.eyebrow}>Browser sample data</p><h1>{isProduct ? "Products" : "Plans"}</h1>
+      <p>{readonly ? "Browse sample products." : `Manage sample ${kind} in this browser. Changes are not saved to the Go server.`}</p></div>
+      {!readonly && <Link className={styles.primary} to={`/admin/${kind}/new`}><Plus size={16} /> Add {singular}</Link>}</header>
     {toast && <div className={styles.toast} role="status"><span>{toast}</span><button onClick={() => setToast(null)} aria-label="Dismiss notification">×</button></div>}
     {actionError && <div className={styles.error} role="alert">{actionError}</div>}
     <div className={styles.toolbar}>
@@ -64,7 +64,7 @@ export function CatalogList({ kind }: { kind: "products" | "plans" }) {
         list.isError ? <div className={styles.empty} role="alert"><h2>Could not load {kind}</h2><p>{list.error.message}</p><button onClick={() => list.refetch()}>Retry</button></div> :
         !list.data.items.length ? <div className={styles.empty}><h2>{params.q ? `No ${kind} match your search` : `No ${kind} yet`}</h2><p>{params.q ? "Try a different search." : `Add your first ${singular} to get started.`}</p></div> :
         <table className={styles.table}><thead><tr>{(isProduct ?
-          ["Name", "Type", "Sales price", "Cost price", "Margin", "Variants", "Actions"] :
+          ["Name", "Type", "Sales price", "Cost price", "Margin", "Variants", ...(readonly ? [] : ["Actions"])] :
           ["Name", "Price", "Billing period", "Min qty", "Available from", "Available to", "Availability", "Flags", "Actions"]).map(label => <th key={label}>{label}</th>)}</tr></thead>
           <tbody>{list.data.items.map(item => <tr key={item.id}>
             {isProduct && "salesPrice" in item ? <>
@@ -79,8 +79,8 @@ export function CatalogList({ kind }: { kind: "products" | "plans" }) {
                 ["Auto-close", item.autoClose], ["Early close", item.earlyClose], ["Pause", item.allowPause], ["Renew", item.allowRenew],
               ].filter(([, enabled]) => enabled).map(([label]) => <span className={styles.badge} key={String(label)}>{label}</span>)}</div></td>
             </> : null}
-            <td><div className={styles.actions}><Link aria-label={`Edit ${item.name}`} to={`/admin/${kind}/${item.id}/edit`}><Pencil size={16} /></Link>
-              <button aria-label={`Delete ${item.name}`} onClick={() => setDeleting(item)}><Trash2 size={16} /></button></div></td>
+            {!readonly && <td><div className={styles.actions}><Link aria-label={`Edit ${item.name}`} to={`/admin/${kind}/${item.id}/edit`}><Pencil size={16} /></Link>
+              <button aria-label={`Delete ${item.name}`} onClick={() => setDeleting(item)}><Trash2 size={16} /></button></div></td>}
           </tr>)}</tbody></table>}
     </div>
     <div className={styles.pagination}><span>{list.data?.total ?? 0} total</span><div>

@@ -10,14 +10,15 @@ import {
   UsersRound,
   X,
 } from "lucide-react";
-import { Show } from "@clerk/react";
 import { NavLink } from "react-router-dom";
+import { useIsAdmin } from "../../auth";
 import styles from "./Sidebar.module.css";
 
 const navigation = [
   { label: "Dashboard", to: "/dashboard", Icon: LayoutDashboard },
   { label: "Subscriptions", to: "/subscriptions", Icon: RefreshCw },
   { label: "Billing & Invoices", to: "/billing", Icon: CreditCard },
+  { label: "Browse products", to: "/products", Icon: Boxes },
 ];
 const adminNavigation = [
   { label: "Products", to: "/admin/products", Icon: Boxes },
@@ -31,6 +32,7 @@ const adminNavigation = [
 type SidebarProps = { open: boolean; onClose: () => void };
 
 export function Sidebar({ open, onClose }: SidebarProps) {
+  const isAdmin = useIsAdmin();
   return (
     <>
       <button
@@ -69,7 +71,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             </NavLink>
           ))}
         </nav>
-        <Show when={{ role: "org:admin" }}>
+        {isAdmin && <>
           <p className={styles.sectionLabel}>Admin</p>
           <nav className={styles.navigation} aria-label="Admin navigation">
             {adminNavigation.map(({ label, to, Icon }) => (
@@ -79,7 +81,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
               </NavLink>
             ))}
           </nav>
-        </Show>
+        </>}
       </aside>
     </>
   );

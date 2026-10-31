@@ -2,24 +2,40 @@ package middleware
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-// CORSMiddleware handles Cross-Origin Resource Sharing for incoming HTTP requests.
-func CORSMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		origin := c.Request.Header.Get("Origin")
-		if origin != "" {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
-		} else {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+// CORSMiddleware allows browser requests from the configured frontend origins.
+func CORSMiddleware(allowedOrigins string) gin.HandlerFunc {
+	allowed := make(map[string]bool)
+	for _, origin := range strings.Split(allowedOrigins, ",") {
+		if origin = strings.TrimSpace(origin); origin != "" {
+			allowed[strings.TrimSuffix(origin, "/")] = true
 		}
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE, PATCH")
+	}
 
-		if c.Request.Method == "OPTIONS" {
+	return func(c *gin.Context) {
+		c.Writer.Header().Add("Vary", "Origin")
+		origin := c.Request.Header.Get("Origin")
+		if origin == "" {
+			c.Next()
+			return
+		}
+		if !allowed[origin] {
+			if c.Request.Method == http.MethodOptions {
+				c.AbortWithStatus(http.StatusForbidden)
+				return
+			}
+			c.Next()
+			return
+		}
+		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+
+		if c.Request.Method == http.MethodOptions {
 			c.AbortWithStatus(http.StatusNoContent)
 			return
 		}

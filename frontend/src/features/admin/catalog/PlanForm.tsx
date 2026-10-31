@@ -46,7 +46,7 @@ export function PlanForm() {
   if (id && plan.isError) return <div className={styles.empty} role="alert"><h2>Could not load plan</h2><p>{plan.error.message}</p><button onClick={() => plan.refetch()}>Retry</button></div>;
   return <div className={styles.page}>
     <header className={styles.header}><div><Link className={styles.back} to="/admin/plans"><ArrowLeft size={15} /> Plans</Link>
-      <h1>{id ? "Edit plan" : "Add plan"}</h1><p>Configure pricing, availability, and lifecycle controls.</p></div></header>
+      <p className={styles.eyebrow}>Browser sample data</p><h1>{id ? "Edit plan" : "Add plan"}</h1><p>Configure pricing, availability, and lifecycle controls. Changes stay in this browser.</p></div></header>
     {saveError && <div className={styles.error} role="alert">{saveError}</div>}
     <form className={styles.form} onSubmit={handleSubmit(data => { setSaveError(""); save.mutate(data); })} noValidate>
       <section className={styles.formCard}><h2>Plan details</h2><div className={styles.formGrid}>

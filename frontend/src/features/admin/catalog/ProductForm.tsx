@@ -49,7 +49,7 @@ export function ProductForm() {
   const cost = Number(values.costPrice) || 0;
   return <div className={styles.page}>
     <header className={styles.header}><div><Link className={styles.back} to="/admin/products"><ArrowLeft size={15} /> Products</Link>
-      <h1>{id ? "Edit product" : "Add product"}</h1><p>Set pricing and optional variant adjustments.</p></div></header>
+      <p className={styles.eyebrow}>Browser sample data</p><h1>{id ? "Edit product" : "Add product"}</h1><p>Set pricing and optional variant adjustments. Changes stay in this browser.</p></div></header>
     {saveError && <div className={styles.error} role="alert">{saveError}</div>}
     <form className={styles.form} onSubmit={submit} noValidate>
       <section className={styles.formCard}><h2>Product details</h2><div className={styles.formGrid}>

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { productSchema, planSchema, planAvailability } from "./validation.ts";
 import { mockCatalog } from "./mock.ts";
+import { pageProducts } from "./pageProducts.ts";
 
 const storage = new Map();
 globalThis.localStorage = {
@@ -52,4 +53,9 @@ test("mock catalog creates, edits, searches, paginates, and deletes", async () =
   assert.equal((await mockCatalog.getPlan(plan.id)).price, 60);
   await mockCatalog.deletePlan(plan.id);
   assert.equal((await mockCatalog.listPlans({ q: "test", page: 1, pageSize: 5 })).total, 0);
+});
+
+test("Go product list is searched and paged in the browser", () => {
+  const items = [{ id: 1, name: "Alpha", description: "", active: true }, { id: 2, name: "Beta", description: "", active: false }, { id: 3, name: "Alpine", description: "", active: true }];
+  assert.deepEqual(pageProducts(items, { q: "al", page: 2, pageSize: 1 }), { items: [items[2]], total: 2, page: 2, pageSize: 1 });
 });

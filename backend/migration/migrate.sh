@@ -6,10 +6,20 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
+<<<<<<< HEAD
 # Check if golang-migrate CLI is installed
 if ! command -v migrate >/dev/null 2>&1; then
     echo "Error: golang-migrate CLI is not installed."
     exit 1
+=======
+if [[ -z "${DATABASE_URL:-}" && -f .env ]]; then
+	while IFS= read -r line; do
+		if [[ "$line" == DATABASE_URL=* ]]; then
+			DATABASE_URL="${line#DATABASE_URL=}"
+			break
+		fi
+	done < .env
+>>>>>>> 2ff69f2 (db:connection with neon)
 fi
 
 # Check if .env exists in project root

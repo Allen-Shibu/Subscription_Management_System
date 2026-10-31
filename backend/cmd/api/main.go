@@ -19,11 +19,15 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+<<<<<<< HEAD
 func setupRouter(pool *pgxpool.Pool, mailer email.Sender) *gin.Engine {
+=======
+func setupRouter(pool *pgxpool.Pool, allowedOrigins string) *gin.Engine {
+>>>>>>> 2ff69f2 (db:connection with neon)
 	r := gin.Default()
 
 	// Apply CORS middleware
-	r.Use(middleware.CORSMiddleware())
+	r.Use(middleware.CORSMiddleware(allowedOrigins))
 
 	// Public health check endpoints
 	healthHandler := func(c *gin.Context) {
@@ -90,7 +94,7 @@ func setupRouter(pool *pgxpool.Pool, mailer email.Sender) *gin.Engine {
 }
 
 func main() {
-	// Load .env file if available (ignore error if missing)
+	// Load required .env file.
 	cfg := config.Load()
 
 	if cfg.ClerkSecretKey == "" {
@@ -106,6 +110,7 @@ func main() {
 	}
 	defer pool.Close()
 
+<<<<<<< HEAD
 	smtpPort, err := strconv.Atoi(cfg.SMTPPort)
 	if err != nil || smtpPort == 0 {
 		smtpPort = 587
@@ -122,6 +127,9 @@ func main() {
 	}
 
 	r := setupRouter(pool, mailer)
+=======
+	r := setupRouter(pool, cfg.CORSAllowedOrigins)
+>>>>>>> 2ff69f2 (db:connection with neon)
 
 	log.Printf("[INFO] Server starting on port :%s\n", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

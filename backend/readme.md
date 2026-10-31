@@ -3,17 +3,18 @@
 Backend API service for Brightloop Software Subscription Billing Platform.
 
 ## Requirements
-- Go 1.22+ (tested on Go 1.27)
+- Go 1.27.3 or newer
 - Clerk account for authentication
-- Docker (for local Postgres) and `psql`
+- A Neon PostgreSQL database and `psql` for migrations
 
 ## Configuration
 Create a `.env` file in `backend/` (or copy from `.env.example`):
 
 ```bash
 PORT=3000
+CORS_ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 GIN_MODE=debug
-DATABASE_URL=postgres://recur:recur@localhost:5432/recur?sslmode=disable
+DATABASE_URL=postgresql://USER:PASSWORD@YOUR_DIRECT_ENDPOINT.neon.tech/DBNAME?sslmode=require
 CLERK_SECRET_KEY=sk_test_...
 CLERK_PUBLISHABLE_KEY=pk_test_...
 SMTP_HOST=smtp.example.com
@@ -23,16 +24,19 @@ SMTP_PASSWORD=...
 SMTP_FROM="Brightloop Billing <billing@example.com>"
 ```
 
+Set `CORS_ALLOWED_ORIGINS` to the exact frontend origins (comma-separated, without paths). For a deployed frontend, replace the local values with its HTTPS origin. Browser requests from other origins receive no CORS permission. The frontend sends a Clerk bearer token in the `Authorization` header; cookie credentials are not enabled.
+
+Copy the **direct (unpooled)** connection string from the Neon console into `backend/.env` as `DATABASE_URL`; keep the TLS settings supplied by Neon. The same URL is used by the Go server and the migration script. Keep this credential on the backend only, never in a `VITE_` variable or a committed file. Neon provides the database, so Docker is not needed.
+
 ## Running the Server
 
 ```bash
-make db-up        # start local Postgres in Docker
 make migrate-up   # apply migration/*_up.sql
 make run          # or: go run ./cmd/api
 ```
 
 Migrations are tracked in `schema_migrations`, so `make migrate-up` is safe to re-run.
-`make migrate-down` reverts the latest applied migrations. No Docker? Point `DATABASE_URL` at any Postgres and run the same commands.
+`make migrate-down` reverts the latest applied migrations. Run migrations against a development Neon branch before using a production branch.
 
 The server starts by default on `http://localhost:3000`.
 
