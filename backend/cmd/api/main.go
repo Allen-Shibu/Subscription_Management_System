@@ -5,15 +5,18 @@ import (
 	"net/http"
 
 	"recur_backend/config"
+	"recur_backend/internals/handlers"
 	"recur_backend/internals/middleware"
+	"recur_backend/internals/repository"
 	"recur_backend/pkg/database"
 	"recur_backend/pkg/types"
 
 	"github.com/clerk/clerk-sdk-go/v2"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func setupRouter() *gin.Engine {
+func setupRouter(pool *pgxpool.Pool) *gin.Engine {
 	r := gin.Default()
 
 	// Apply CORS middleware
@@ -43,6 +46,9 @@ func setupRouter() *gin.Engine {
 				role = claims.ActiveOrganizationRole
 				orgID = claims.ActiveOrganizationID
 				custom = claims.Custom
+				if rc, ok := claims.Custom.(*middleware.RoleClaims); ok {
+					role = rc.Role
+				}
 			}
 
 			c.JSON(http.StatusOK, gin.H{
@@ -64,6 +70,9 @@ func setupRouter() *gin.Engine {
 				})
 			})
 		}
+
+		productHandler := handlers.NewProductHandler(repository.NewProductRepository(pool))
+		productHandler.RegisterRoutes(api, admin)
 	}
 
 	return r
@@ -86,7 +95,7 @@ func main() {
 	}
 	defer pool.Close()
 
-	r := setupRouter()
+	r := setupRouter(pool)
 
 	log.Printf("[INFO] Server starting on port :%s\n", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

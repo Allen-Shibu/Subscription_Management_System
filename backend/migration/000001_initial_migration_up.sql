@@ -1,6 +1,6 @@
 CREATE TYPE user_role AS ENUM ('admin', 'staff', 'customer');
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
     clerk_id TEXT NOT NULL UNIQUE, -- Clerk's user_xxx ID, the bridge between both systems
     email TEXT,

@@ -1,12 +1,18 @@
 package middleware
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/clerk/clerk-sdk-go/v2"
 	clerkhttp "github.com/clerk/clerk-sdk-go/v2/http"
 	"github.com/gin-gonic/gin"
 )
+
+// RoleClaims is the custom session claim added in the Clerk dashboard.
+type RoleClaims struct {
+	Role string `json:"role"`
+}
 
 // ClerkAuth authenticates incoming requests using Clerk session tokens.
 func ClerkAuth() gin.HandlerFunc {
@@ -17,6 +23,10 @@ func ClerkAuth() gin.HandlerFunc {
 			w.WriteHeader(http.StatusUnauthorized)
 			_, _ = w.Write([]byte(`{"error":"unauthorized"}`))
 		})),
+		// Without this, custom claims (role) are dropped from the verified token.
+		clerkhttp.CustomClaimsConstructor(func(context.Context) any {
+			return &RoleClaims{}
+		}),
 	)
 
 	return func(c *gin.Context) {

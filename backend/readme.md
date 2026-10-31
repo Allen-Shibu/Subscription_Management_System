@@ -57,3 +57,28 @@ go test ./...
 | `GET` | `/api/health` | No | API health check |
 | `GET` | `/api/me` | Yes (Bearer Token) | Returns authenticated user claims & role |
 | `GET` | `/api/admin/ping` | Yes (Admin Role) | Admin-only test endpoint |
+| `GET` | `/api/products` | Yes | List products |
+| `GET` | `/api/products/:id` | Yes | Get a product |
+| `GET` | `/api/products/:id/variants` | Yes | List a product's tiers |
+| `GET` | `/api/variants/:variantID` | Yes | Get a tier |
+| `POST` | `/api/admin/products` | Yes (Admin Role) | Create a product |
+| `PUT` | `/api/admin/products/:id` | Yes (Admin Role) | Replace a product |
+| `DELETE` | `/api/admin/products/:id` | Yes (Admin Role) | Delete a product and its tiers |
+| `POST` | `/api/admin/products/:id/variants` | Yes (Admin Role) | Create a tier |
+| `PUT` | `/api/admin/variants/:variantID` | Yes (Admin Role) | Replace a tier |
+| `DELETE` | `/api/admin/variants/:variantID` | Yes (Admin Role) | Delete a tier |
+
+Prices are stored in integer cents (`priceCents`) to avoid floating point money bugs.
+`billingInterval` is `month` or `year`; `currency` is a 3-letter code (defaults to `USD`).
+
+## Example
+
+```bash
+curl -X POST localhost:3000/api/admin/products \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"name":"Starter","description":"Basic plan"}'
+
+curl -X POST localhost:3000/api/admin/products/1/variants \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"name":"Pro","priceCents":1999,"billingInterval":"month"}'
+```

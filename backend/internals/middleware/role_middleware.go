@@ -37,12 +37,8 @@ func hasRole(claims *clerk.SessionClaims, want string) bool {
 		return true
 	}
 
-	custom, ok := claims.Custom.(map[string]any)
-	if !ok {
-		return false
-	}
-	role, ok := custom["role"].(string)
-	return ok && normalizeRole(role) == want
+	custom, ok := claims.Custom.(*RoleClaims)
+	return ok && normalizeRole(custom.Role) == want
 }
 
 func normalizeRole(role string) string {
