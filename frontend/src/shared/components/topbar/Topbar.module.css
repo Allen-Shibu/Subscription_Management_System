@@ -8,8 +8,8 @@
   justify-content: space-between;
   gap: 20px;
   padding: 0 32px;
-  border-bottom: 1px solid #e9eaf0;
-  background: #ffffffed;
+  border-bottom: 1px solid var(--color-topbar-border);
+  background: var(--color-topbar-bg);
   backdrop-filter: blur(12px);
 }
 .search {
@@ -19,10 +19,10 @@
   align-items: center;
   gap: 9px;
   padding: 0 11px;
-  border: 1px solid #ececf1;
+  border: 1px solid var(--color-border-primary);
   border-radius: 8px;
-  background: #f8f8fa;
-  color: #858a96;
+  background: var(--color-input-bg);
+  color: var(--color-text-muted);
 }
 .search input {
   width: 100%;
@@ -30,19 +30,19 @@
   border: 0;
   outline: 0;
   background: transparent;
-  color: #333744;
+  color: var(--color-text-strong);
   font: inherit;
   font-size: 12px;
 }
 .search input::placeholder {
-  color: #9296a1;
+  color: var(--color-input-placeholder);
 }
 .search kbd {
   flex: 0 0 auto;
   padding: 3px 5px;
-  border: 1px solid #e4e5eb;
+  border: 1px solid var(--color-border-secondary);
   border-radius: 4px;
-  color: #9195a0;
+  color: var(--color-text-muted);
   font-size: 9px;
 }
 .actions {
@@ -59,17 +59,20 @@
   justify-content: center;
   border: 0;
   background: transparent;
-  color: #515765;
+  color: var(--color-text-secondary);
   cursor: pointer;
 }
 .rangeButton {
   gap: 8px;
   padding: 9px 11px;
-  border: 1px solid #e9eaf0;
+  border: 1px solid var(--color-topbar-border);
   border-radius: 7px;
-  background: white;
+  background: var(--color-surface);
   font: inherit;
   font-size: 11px;
+}
+.rangeButton:hover {
+  background: var(--color-topbar-hover);
 }
 .iconButton {
   width: 34px;
@@ -78,7 +81,7 @@
 }
 .iconButton:hover,
 .profileButton:hover {
-  background: #f5f5f8;
+  background: var(--color-topbar-hover);
 }
 .profileWrap {
   position: relative;
@@ -96,8 +99,8 @@
   height: 30px;
   place-items: center;
   border-radius: 50%;
-  background: #e9d9e4;
-  color: #704c6c;
+  background: var(--color-avatar-purple);
+  color: var(--color-primary);
   font-size: 10px;
   font-weight: 700;
 }
@@ -109,22 +112,22 @@
   width: 210px;
   gap: 12px;
   padding: 14px;
-  border: 1px solid #e8e9ef;
+  border: 1px solid var(--color-border-primary);
   border-radius: 9px;
-  background: white;
-  box-shadow: 0 12px 32px #1018281a;
-  color: #737887;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-large);
+  color: var(--color-text-tertiary);
   font-size: 11px;
 }
 .profileMenu strong {
   display: block;
   margin-top: 4px;
-  color: #303542;
+  color: var(--color-text-strong);
 }
 .profileMenu a {
   padding-top: 10px;
-  border-top: 1px solid #eeeef2;
-  color: #704c6c;
+  border-top: 1px solid var(--color-border-secondary);
+  color: var(--color-primary);
   text-decoration: none;
 }
 .menuButton {

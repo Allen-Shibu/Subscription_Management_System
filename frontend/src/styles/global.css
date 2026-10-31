@@ -1,7 +1,8 @@
+@import './theme.css';
 :root {
   font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  color: #172033;
-  background: #f5f7fb;
+  color: var(--color-text-primary);
+  background: var(--color-bg-primary);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -15,7 +16,7 @@ body {
   margin: 0;
 }
 a {
-  color: #4f46e5;
+  color: var(--color-accent);
 }
 .page-shell {
   max-width: 1000px;
@@ -35,14 +36,14 @@ a {
 }
 .eyebrow {
   margin: 0;
-  color: #667085;
+  color: var(--color-text-tertiary);
   font-size: 14px;
 }
 .panel {
   padding: 24px;
-  border: 1px solid #e4e7ec;
+  border: 1px solid var(--color-input-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--color-surface);
 }
 .workspace-page {
   max-width: 1500px;
@@ -50,12 +51,12 @@ a {
 }
 .workspace-page h1 {
   margin: 0 0 20px;
-  color: #20212a;
+  color: var(--color-text-heading);
   font-size: 27px;
 }
 .workspace-page .eyebrow {
   margin: 0 0 7px;
-  color: #704c6c;
+  color: var(--color-primary);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.09em;

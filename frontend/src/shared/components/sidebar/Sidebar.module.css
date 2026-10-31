@@ -6,8 +6,8 @@
   width: 248px;
   flex-direction: column;
   padding: 22px 16px 18px;
-  border-right: 1px solid #e8e9ef;
-  background: #fff;
+  border-right: 1px solid var(--color-border-primary);
+  background: var(--color-surface);
 }
 .brandRow {
   display: flex;
@@ -19,7 +19,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: #172033;
+  color: var(--color-text-primary);
   font-size: 17px;
   font-weight: 700;
   text-decoration: none;
@@ -30,13 +30,13 @@
   height: 30px;
   place-items: center;
   border-radius: 9px;
-  background: #704c6c;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
   font-size: 16px;
 }
 .sectionLabel {
   margin: 0 10px 10px;
-  color: #9296a3;
+  color: var(--color-text-muted);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -53,7 +53,7 @@
   gap: 11px;
   padding: 0 11px;
   border-radius: 8px;
-  color: #555b68;
+  color: var(--color-text-secondary);
   font-size: 13px;
   text-decoration: none;
   transition:
@@ -61,13 +61,13 @@
     color 0.15s;
 }
 .navLink:hover {
-  background: #f5f2f5;
-  color: #704c6c;
+  background: var(--color-primary-highlight);
+  color: var(--color-primary);
 }
 .active,
 .active:hover {
-  background: #704c6c;
-  color: white;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
 }
 .sidebarFooter {
   display: flex;
@@ -76,19 +76,19 @@
   margin-top: auto;
   padding: 14px 11px;
   border-radius: 9px;
-  background: #f7f7f9;
+  background: var(--color-surface-hover);
 }
 .sidebarFooter div {
   display: grid;
   gap: 3px;
 }
 .sidebarFooter strong {
-  color: #424754;
+  color: var(--color-text-secondary);
   font-size: 11px;
   font-weight: 600;
 }
 .sidebarFooter span:not(.statusDot) {
-  color: #828794;
+  color: var(--color-text-muted);
   font-size: 10px;
 }
 .statusDot {
@@ -96,7 +96,7 @@
   height: 8px;
   flex: 0 0 8px;
   border-radius: 50%;
-  background: #15966c;
+  background: var(--color-success);
 }
 .closeButton,
 .backdrop {
@@ -107,7 +107,7 @@
     width: min(290px, 84vw);
     transform: translateX(-102%);
     transition: transform 0.22s ease;
-    box-shadow: 16px 0 36px #1018281a;
+    box-shadow: var(--shadow-sidebar);
   }
   .sidebarOpen {
     transform: translateX(0);
@@ -120,7 +120,7 @@
     border: 0;
     border-radius: 8px;
     background: transparent;
-    color: #5e6471;
+    color: var(--color-text-secondary);
   }
   .backdrop {
     position: fixed;
@@ -128,7 +128,7 @@
     inset: 0;
     display: block;
     border: 0;
-    background: #17182766;
+    background: var(--color-overlay-heavy);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s;

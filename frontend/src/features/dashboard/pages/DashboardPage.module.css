@@ -11,7 +11,7 @@
 }
 .eyebrow {
   margin: 0 0 7px;
-  color: #704c6c;
+  color: var(--color-primary);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -19,13 +19,13 @@
 }
 .headingRow h1 {
   margin: 0;
-  color: #20212a;
+  color: var(--color-text-heading);
   font-size: clamp(22px, 2vw, 29px);
   letter-spacing: -0.035em;
 }
 .subtitle {
   margin: 6px 0 0;
-  color: #777b87;
+  color: var(--color-text-tertiary);
   font-size: 11px;
 }
 .headingActions {
@@ -40,18 +40,29 @@
   justify-content: center;
   gap: 7px;
   padding: 0 12px;
-  border: 1px solid #e5e4e9;
+  border: 1px solid var(--color-border-primary);
   border-radius: 7px;
-  background: #fff;
-  color: #444853;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
   font: inherit;
   font-size: 10px;
   white-space: nowrap;
 }
 .primaryButton {
-  border-color: #704c6c;
-  background: #704c6c;
-  color: white;
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+}
+.primaryButton:hover {
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary-hover);
+}
+.primaryButton:active {
+  border-color: var(--color-primary-active);
+  background: var(--color-primary-active);
+}
+.secondaryButton:hover {
+  background: var(--color-bg-hover);
 }
 .metricGrid {
   display: grid;
@@ -62,10 +73,10 @@
 .metricCard,
 .card {
   min-width: 0;
-  border: 1px solid #e8e9ef;
+  border: 1px solid var(--color-border-primary);
   border-radius: 10px;
-  background: white;
-  box-shadow: 0 2px 6px #10182805;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
 }
 .metricCard {
   padding: 15px 16px 14px;
@@ -76,7 +87,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
-  color: #737784;
+  color: var(--color-text-tertiary);
   font-size: 10px;
 }
 .metricIcon {
@@ -86,17 +97,17 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 6px;
-  background: #f2edf2;
-  color: #704c6c;
+  background: var(--color-primary-highlight);
+  color: var(--color-primary);
 }
 .metricCard:nth-child(3) .metricIcon {
-  background: #e4f6ed;
-  color: #07815d;
+  background: var(--color-success-highlight);
+  color: var(--color-success);
 }
 .metricValue {
   display: block;
   margin: 5px 0 7px;
-  color: #22232b;
+  color: var(--color-text-heading);
   font-size: 25px;
   font-weight: 650;
   letter-spacing: -0.04em;
@@ -105,11 +116,11 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #12805f;
+  color: var(--color-success);
   font-size: 9px;
 }
 .metricChange span {
-  color: #898d98;
+  color: var(--color-text-muted);
 }
 .contentGrid {
   display: grid;
@@ -143,13 +154,13 @@
 }
 .cardHeading h2 {
   margin: 0;
-  color: #282a33;
+  color: var(--color-text-strong);
   font-size: 12px;
   font-weight: 650;
 }
 .cardHeading p {
   margin: 4px 0 0;
-  color: #858995;
+  color: var(--color-text-muted);
   font-size: 9px;
 }
 .cardHeading a {
@@ -157,7 +168,7 @@
   flex: 0 0 auto;
   align-items: center;
   gap: 4px;
-  color: #704c6c;
+  color: var(--color-primary);
   font-size: 9px;
   text-decoration: none;
 }
@@ -166,28 +177,28 @@
   gap: 2px;
   padding: 3px;
   border-radius: 6px;
-  background: #f2f2f5;
+  background: var(--color-bg-active);
 }
 .periodTabs button {
   padding: 4px 6px;
   border: 0;
   border-radius: 4px;
   background: transparent;
-  color: #7b7e89;
+  color: var(--color-text-tertiary);
   font: inherit;
   font-size: 8px;
 }
 .periodTabs .selectedTab {
-  background: #fff;
-  color: #704c6c;
-  box-shadow: 0 1px 2px #10182814;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-soft);
 }
 .chartLegend {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
   margin: 18px 0 8px;
-  color: #656a76;
+  color: var(--color-text-secondary);
   font-size: 8px;
 }
 .chartLegend span {
@@ -201,10 +212,10 @@
   border-radius: 50%;
 }
 .purpleDot {
-  background: #795674;
+  background: var(--color-chart-1);
 }
 .greenDot {
-  background: #07815d;
+  background: var(--color-success);
 }
 .chart {
   position: relative;
@@ -217,7 +228,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: #a0a3ac;
+  color: var(--color-text-disabled);
   font-size: 8px;
 }
 .chartGrid span {
@@ -228,7 +239,7 @@
 .chartGrid span::after {
   height: 1px;
   flex: 1;
-  border-top: 1px dashed #eeeef2;
+  border-top: 1px dashed var(--color-border-secondary);
   content: "";
 }
 .chart svg {
@@ -242,7 +253,7 @@
   display: flex;
   justify-content: space-between;
   padding: 8px 0 0 36px;
-  color: #777b87;
+  color: var(--color-text-tertiary);
   font-size: 8px;
 }
 .plan {
@@ -252,16 +263,16 @@
   display: flex;
   justify-content: space-between;
   gap: 8px;
-  color: #454955;
+  color: var(--color-text-secondary);
   font-size: 9px;
 }
 .plan > div:first-child span {
-  color: #30333d;
+  color: var(--color-text-strong);
   font-weight: 600;
 }
 .plan small {
   margin-left: 4px;
-  color: #858995;
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 400;
 }
@@ -270,19 +281,19 @@
   margin-top: 7px;
   overflow: hidden;
   border-radius: 8px;
-  background: #f1eef2;
+  background: var(--color-primary-highlight);
 }
 .progress i {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: #795674;
+  background: var(--color-chart-1);
 }
 .plan:nth-of-type(3) .progress i {
-  background: #c98fc1;
+  background: var(--color-chart-3);
 }
 .plan:nth-of-type(4) .progress i {
-  background: #66d5a4;
+  background: var(--color-chart-4);
 }
 .performer {
   display: flex;
@@ -291,17 +302,17 @@
   margin-top: 20px;
   padding: 11px;
   border-radius: 8px;
-  background: #f7f7f9;
-  color: #07815d;
+  background: var(--color-surface-hover);
+  color: var(--color-success);
 }
 .performer span {
   flex: 1;
-  color: #5f6470;
+  color: var(--color-text-secondary);
   font-size: 8px;
   line-height: 1.5;
 }
 .performer strong {
-  color: #363a45;
+  color: var(--color-text-strong);
   font-size: 9px;
 }
 .recentCard .cardHeading {
@@ -318,16 +329,16 @@
 }
 .recentCard th {
   padding: 9px 12px;
-  background: #fafafd;
-  color: #858995;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-muted);
   font-size: 8px;
   font-weight: 600;
   text-transform: uppercase;
 }
 .recentCard td {
   padding: 11px 12px;
-  border-top: 1px solid #f0f0f3;
-  color: #515663;
+  border-top: 1px solid var(--color-border-secondary);
+  color: var(--color-text-secondary);
   font-size: 8px;
 }
 .recentCard th:first-child,
@@ -338,7 +349,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #393d48;
+  color: var(--color-text-secondary);
 }
 .recentCard td:first-child strong {
   font-size: 9px;
@@ -352,24 +363,24 @@
   flex: 0 0 auto;
   place-items: center;
   border-radius: 7px;
-  color: #704c6c;
+  color: var(--color-primary);
   font-size: 8px;
   font-weight: 700;
 }
 .color0 {
-  background: #f0dced;
+  background: var(--color-avatar-purple);
 }
 .color1 {
-  background: #d5f0e7;
-  color: #168161;
+  background: var(--color-avatar-green);
+  color: var(--color-success);
 }
 .color2 {
-  background: #f5e2d9;
-  color: #ad573a;
+  background: var(--color-avatar-orange);
+  color: var(--color-warning);
 }
 .color3 {
-  background: #e7e7eb;
-  color: #666b76;
+  background: var(--color-avatar-neutral);
+  color: var(--color-text-secondary);
 }
 .planTag {
   display: inline-block;
@@ -377,16 +388,16 @@
   overflow: hidden;
   padding: 4px 6px;
   border-radius: 4px;
-  background: #f1eff3;
-  color: #646875;
+  background: var(--color-tag-purple);
+  color: var(--color-text-secondary);
   text-overflow: ellipsis;
 }
 .status {
   display: inline-block;
   padding: 3px 7px;
   border-radius: 10px;
-  background: #dff5ea;
-  color: #087d58;
+  background: var(--color-success-highlight);
+  color: var(--color-success-strong);
   font-size: 8px;
 }
 .status::before {
@@ -394,14 +405,14 @@
   content: "•";
 }
 .renewing {
-  background: #f9e9df;
-  color: #a25231;
+  background: var(--color-warning-highlight);
+  color: var(--color-warning);
 }
 .pending {
   padding: 5px 7px;
   border-radius: 6px;
-  background: #f8e5dc;
-  color: #a45437;
+  background: var(--color-warning-highlight);
+  color: var(--color-warning);
   font-size: 8px;
   white-space: nowrap;
 }
@@ -414,7 +425,7 @@
 .renewalAvatar {
   width: 27px;
   height: 27px;
-  background: #e8e2eb;
+  background: var(--color-primary-highlight);
   font-size: 9px;
 }
 .renewal > div:nth-child(2) {
@@ -425,13 +436,13 @@
 }
 .renewal strong {
   overflow: hidden;
-  color: #3d414c;
+  color: var(--color-text-strong);
   font-size: 9px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .renewal span:not(.renewalAvatar) {
-  color: #858995;
+  color: var(--color-text-muted);
   font-size: 8px;
 }
 .renewal > div:last-child {
@@ -440,11 +451,11 @@
   gap: 3px;
 }
 .renewal b {
-  color: #3a3e48;
+  color: var(--color-text-strong);
   font-size: 9px;
 }
 .renewal a {
-  color: #704c6c;
+  color: var(--color-primary);
   font-size: 8px;
   text-decoration: none;
 }
