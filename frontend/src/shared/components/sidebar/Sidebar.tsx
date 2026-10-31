@@ -1,22 +1,31 @@
 import {
-  BarChart3,
   CreditCard,
   LayoutDashboard,
   RefreshCw,
-  Settings,
+  Boxes,
+  CalendarClock,
+  FileText,
+  Percent,
+  ReceiptText,
   UsersRound,
   X,
 } from "lucide-react";
+import { Show } from "@clerk/react";
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
 
 const navigation = [
   { label: "Dashboard", to: "/dashboard", Icon: LayoutDashboard },
   { label: "Subscriptions", to: "/subscriptions", Icon: RefreshCw },
-  { label: "Staff", to: "/staff", Icon: UsersRound },
   { label: "Billing & Invoices", to: "/billing", Icon: CreditCard },
-  { label: "Analytics", to: "/analytics", Icon: BarChart3 },
-  { label: "Settings", to: "/settings", Icon: Settings },
+];
+const adminNavigation = [
+  { label: "Products", to: "/products", Icon: Boxes },
+  { label: "Plans", to: "/plans", Icon: CalendarClock },
+  { label: "Taxes", to: "/taxes", Icon: ReceiptText },
+  { label: "Discounts", to: "/discounts", Icon: Percent },
+  { label: "Staff", to: "/staff", Icon: UsersRound },
+  { label: "Quotation templates", to: "/quotation-templates", Icon: FileText },
 ];
 
 type SidebarProps = { open: boolean; onClose: () => void };
@@ -60,6 +69,17 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             </NavLink>
           ))}
         </nav>
+        <Show when={{ role: "org:admin" }}>
+          <p className={styles.sectionLabel}>Admin</p>
+          <nav className={styles.navigation} aria-label="Admin navigation">
+            {adminNavigation.map(({ label, to, Icon }) => (
+              <NavLink key={to} to={to} onClick={onClose}
+                className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ""}`}>
+                <Icon size={17} strokeWidth={1.8} /><span>{label}</span>
+              </NavLink>
+            ))}
+          </nav>
+        </Show>
       </aside>
     </>
   );
