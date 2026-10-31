@@ -26,7 +26,6 @@ func setupRouter() *gin.Engine {
 		})
 	}
 	r.GET("/health", healthHandler)
-	r.GET("/api/health", healthHandler)
 
 	// Protected API routes
 	api := r.Group("/api")
