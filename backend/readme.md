@@ -16,6 +16,11 @@ GIN_MODE=debug
 DATABASE_URL=postgres://recur:recur@localhost:5432/recur?sslmode=disable
 CLERK_SECRET_KEY=sk_test_...
 CLERK_PUBLISHABLE_KEY=pk_test_...
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_USERNAME=...
+SMTP_PASSWORD=...
+SMTP_FROM="Brightloop Billing <billing@example.com>"
 ```
 
 ## Running the Server
@@ -99,11 +104,14 @@ All of these require the staff or admin role.
 | `POST` | `/api/staff/subscriptions/:id/invoices` | Issue an invoice for the current period, consume pending discounts, and advance the subscription to the next period. |
 | `GET` | `/api/staff/subscriptions/:id/invoices` | List invoices. |
 | `GET` | `/api/staff/invoices/:invoiceID` | Get one invoice. |
+| `GET` | `/api/staff/invoices/:invoiceID/pdf` | Download the invoice as a PDF. |
+| `POST` | `/api/staff/invoices/:invoiceID/send` | Email the invoice PDF to the customer and record `emailSentAt`. |
 | `POST` | `/api/staff/invoices/:invoiceID/pay` | Mark an open invoice as paid. |
 | `POST` | `/api/staff/invoices/:invoiceID/refunds` | Refund a paid invoice (`amountCents`, `reason`), capped at the unrefunded total. |
 | `GET` | `/api/staff/invoices/:invoiceID/refunds` | List refunds. |
 | `PUT` | `/api/admin/subscriptions/:id/tax-rule` | Admin only. `{"taxRuleId": 1}` attaches a tax rule; `null` clears it. |
 
+<<<<<<< HEAD
 Invoices are numbered automatically (`INV-000001`). Issuing one applies the subscription's tax rule: tax is charged on `subtotal - discount`, and the rate is snapshotted on the invoice. Emailing invoices is not implemented yet; `emailSentAt` stays `null`.
 
 ## Tax rules
@@ -125,6 +133,13 @@ Admins create and change rules; any signed-in user can read them.
 ## Staff accounts
 
 `POST /api/admin/staff` with `{"email":"staff@example.com"}` sends a Clerk invitation carrying `public_metadata.role = "staff"`. The invitee sets their own password, so no credentials pass through this API. Admin role required.
+=======
+Invoices are numbered automatically (`INV-000001`). `PDF` is rendered with gofpdf.
+`send` emails the PDF through SMTP using the customer's `users.email`; it returns `409`
+if the invoice was already sent, `422` if the customer has no email, and `502` if
+delivery fails. Sending requires `SMTP_HOST`, `SMTP_FROM`, and (usually) credentials.
+Port `587` uses STARTTLS, port `465` uses implicit TLS.
+>>>>>>> 9022f34 (feat(backend):add invoice service)
 
 ## Example
 

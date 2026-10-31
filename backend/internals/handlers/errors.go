@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"recur_backend/internals/repository"
+	invoicesvc "recur_backend/internals/services/invoice"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -31,6 +32,15 @@ func respondDBError(c *gin.Context, err error) {
 		c.JSON(http.StatusConflict, gin.H{"error": "invoice must be paid before refunding"})
 	case errors.Is(err, repository.ErrRefundExceedsTotal):
 		c.JSON(http.StatusBadRequest, gin.H{"error": "refund exceeds the remaining invoice total"})
+	case errors.Is(err, invoicesvc.ErrInvoiceAlreadySent):
+		c.JSON(http.StatusConflict, gin.H{"error": "invoice has already been emailed"})
+	case errors.Is(err, invoicesvc.ErrInvoiceNotSendable):
+		c.JSON(http.StatusConflict, gin.H{"error": "invoice cannot be emailed in its current status"})
+	case errors.Is(err, invoicesvc.ErrCustomerEmailMissing):
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "customer does not have an email address"})
+	case errors.Is(err, invoicesvc.ErrEmailDelivery):
+		log.Printf("[ERROR] email: %v", err)
+		c.JSON(http.StatusBadGateway, gin.H{"error": "failed to send invoice email"})
 	case isPGError(err, "23505"):
 		c.JSON(http.StatusConflict, gin.H{"error": "already exists"})
 	case isPGError(err, "23503"):

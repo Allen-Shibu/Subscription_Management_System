@@ -302,6 +302,39 @@ func (r *SubscriptionRepository) GetInvoice(ctx context.Context, id int64) (mode
 	return scanInvoice(row)
 }
 
+// GetInvoiceDetails loads everything needed to render an invoice document.
+func (r *SubscriptionRepository) GetInvoiceDetails(ctx context.Context, id int64) (models.InvoiceDetails, error) {
+	var d models.InvoiceDetails
+	err := r.db.QueryRow(ctx, `
+		SELECT i.id, i.invoice_number, i.subscription_id, i.status, i.period_start, i.period_end,
+			i.subtotal_cents, i.discount_cents, i.total_cents, i.issued_at, i.due_at, i.paid_at,
+			i.email_sent_at, i.created_by, i.created_at,
+			COALESCE(NULLIF(BTRIM(CONCAT_WS(' ', u.first_name, u.last_name)), ''), u.email, 'Customer'),
+			COALESCE(u.email, ''),
+			p.name, v.name, s.quantity, s.unit_price_cents, s.currency, s.billing_interval
+		FROM invoices i
+		JOIN subscriptions s ON s.id = i.subscription_id
+		JOIN users u ON u.id = s.customer_id
+		JOIN product_variants v ON v.id = s.variant_id
+		JOIN products p ON p.id = v.product_id
+		WHERE i.id = $1`, id).
+		Scan(&d.ID, &d.InvoiceNumber, &d.SubscriptionID, &d.Status, &d.PeriodStart, &d.PeriodEnd,
+			&d.SubtotalCents, &d.DiscountCents, &d.TotalCents, &d.IssuedAt, &d.DueAt, &d.PaidAt,
+			&d.EmailSentAt, &d.CreatedBy, &d.CreatedAt,
+			&d.CustomerName, &d.CustomerEmail, &d.ProductName, &d.VariantName,
+			&d.Quantity, &d.UnitPriceCents, &d.Currency, &d.BillingInterval)
+	return d, err
+}
+
+// MarkInvoiceEmailSent records a successful delivery.
+func (r *SubscriptionRepository) MarkInvoiceEmailSent(ctx context.Context, id int64) (models.Invoice, error) {
+	row := r.db.QueryRow(ctx, `
+		UPDATE invoices SET email_sent_at = NOW()
+		WHERE id = $1
+		RETURNING `+invoiceColumns, id)
+	return scanInvoice(row)
+}
+
 func (r *SubscriptionRepository) MarkInvoicePaid(ctx context.Context, id int64) (models.Invoice, error) {
 	row := r.db.QueryRow(ctx, `
 		UPDATE invoices

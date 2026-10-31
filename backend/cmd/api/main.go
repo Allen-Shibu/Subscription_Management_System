@@ -3,12 +3,15 @@ package main
 import (
 	"log"
 	"net/http"
+	"strconv"
 
 	"recur_backend/config"
 	"recur_backend/internals/handlers"
 	"recur_backend/internals/middleware"
 	"recur_backend/internals/repository"
+	invoicesvc "recur_backend/internals/services/invoice"
 	"recur_backend/pkg/database"
+	"recur_backend/pkg/email"
 	"recur_backend/pkg/types"
 
 	"github.com/clerk/clerk-sdk-go/v2"
@@ -16,7 +19,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func setupRouter(pool *pgxpool.Pool) *gin.Engine {
+func setupRouter(pool *pgxpool.Pool, mailer email.Sender) *gin.Engine {
 	r := gin.Default()
 
 	// Apply CORS middleware
@@ -77,13 +80,10 @@ func setupRouter(pool *pgxpool.Pool) *gin.Engine {
 		productHandler := handlers.NewProductHandler(repository.NewProductRepository(pool))
 		productHandler.RegisterRoutes(api, admin)
 
-		subscriptionHandler := handlers.NewSubscriptionHandler(repository.NewSubscriptionRepository(pool))
-		subscriptionHandler.RegisterRoutes(staff, admin)
-
-		taxRuleHandler := handlers.NewTaxRuleHandler(repository.NewTaxRuleRepository(pool))
-		taxRuleHandler.RegisterRoutes(api, admin)
-
-		handlers.RegisterStaffRoutes(admin)
+		subscriptionRepo := repository.NewSubscriptionRepository(pool)
+		invoiceService := invoicesvc.New(subscriptionRepo, mailer)
+		subscriptionHandler := handlers.NewSubscriptionHandler(subscriptionRepo, invoiceService)
+		subscriptionHandler.RegisterRoutes(staff)
 	}
 
 	return r
@@ -106,7 +106,22 @@ func main() {
 	}
 	defer pool.Close()
 
-	r := setupRouter(pool)
+	smtpPort, err := strconv.Atoi(cfg.SMTPPort)
+	if err != nil || smtpPort == 0 {
+		smtpPort = 587
+	}
+	mailer := email.NewSMTP(email.Config{
+		Host:     cfg.SMTPHost,
+		Port:     smtpPort,
+		Username: cfg.SMTPUsername,
+		Password: cfg.SMTPPassword,
+		From:     cfg.SMTPFrom,
+	})
+	if cfg.SMTPHost == "" {
+		log.Println("[WARN] SMTP_HOST is not set; invoice emails will fail to send")
+	}
+
+	r := setupRouter(pool, mailer)
 
 	log.Printf("[INFO] Server starting on port :%s\n", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {

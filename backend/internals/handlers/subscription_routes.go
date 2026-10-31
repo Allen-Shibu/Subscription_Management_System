@@ -14,6 +14,8 @@ func (h *SubscriptionHandler) RegisterRoutes(staff, admin *gin.RouterGroup) {
 	staff.POST("/subscriptions/:id/invoices", h.CreateInvoice)
 	staff.GET("/subscriptions/:id/invoices", h.ListInvoices)
 	staff.GET("/invoices/:invoiceID", h.GetInvoice)
+	staff.GET("/invoices/:invoiceID/pdf", h.DownloadInvoicePDF)
+	staff.POST("/invoices/:invoiceID/send", h.SendInvoice)
 	staff.POST("/invoices/:invoiceID/pay", h.PayInvoice)
 	staff.POST("/invoices/:invoiceID/refunds", h.CreateRefund)
 	staff.GET("/invoices/:invoiceID/refunds", h.ListRefunds)

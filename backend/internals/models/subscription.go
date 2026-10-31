@@ -90,3 +90,17 @@ type Refund struct {
 	CreatedBy   string    `json:"createdBy"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
+
+// InvoiceDetails joins an invoice with the subscription, product, and customer
+// fields needed to render and email the document.
+type InvoiceDetails struct {
+	Invoice
+	CustomerName    string
+	CustomerEmail   string
+	ProductName     string
+	VariantName     string
+	Quantity        int
+	UnitPriceCents  int64
+	Currency        string
+	BillingInterval string
+}

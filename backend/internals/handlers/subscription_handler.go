@@ -10,16 +10,18 @@ import (
 	"recur_backend/internals/middleware"
 	"recur_backend/internals/models"
 	"recur_backend/internals/repository"
+	invoicesvc "recur_backend/internals/services/invoice"
 
 	"github.com/gin-gonic/gin"
 )
 
 type SubscriptionHandler struct {
-	repo *repository.SubscriptionRepository
+	repo     *repository.SubscriptionRepository
+	invoices *invoicesvc.Service
 }
 
-func NewSubscriptionHandler(repo *repository.SubscriptionRepository) *SubscriptionHandler {
-	return &SubscriptionHandler{repo: repo}
+func NewSubscriptionHandler(repo *repository.SubscriptionRepository, invoiceService *invoicesvc.Service) *SubscriptionHandler {
+	return &SubscriptionHandler{repo: repo, invoices: invoiceService}
 }
 
 var subscriptionStatuses = map[string]bool{

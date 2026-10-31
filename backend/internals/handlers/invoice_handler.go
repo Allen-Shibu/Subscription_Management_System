@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -153,4 +154,37 @@ func (h *SubscriptionHandler) ListRefunds(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, refunds)
+}
+
+// DownloadInvoicePDF streams the rendered invoice as a PDF attachment.
+func (h *SubscriptionHandler) DownloadInvoicePDF(c *gin.Context) {
+	id, ok := parseID(c, "invoiceID")
+	if !ok {
+		return
+	}
+
+	document, details, err := h.invoices.Render(c.Request.Context(), id)
+	if err != nil {
+		respondDBError(c, err)
+		return
+	}
+
+	c.Header("Content-Type", "application/pdf")
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s.pdf"`, details.InvoiceNumber))
+	c.Data(http.StatusOK, "application/pdf", document)
+}
+
+// SendInvoice emails the rendered invoice to the customer.
+func (h *SubscriptionHandler) SendInvoice(c *gin.Context) {
+	id, ok := parseID(c, "invoiceID")
+	if !ok {
+		return
+	}
+
+	invoice, err := h.invoices.Send(c.Request.Context(), id)
+	if err != nil {
+		respondDBError(c, err)
+		return
+	}
+	c.JSON(http.StatusOK, invoice)
 }
