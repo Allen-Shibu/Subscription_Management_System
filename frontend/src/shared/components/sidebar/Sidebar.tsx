@@ -60,13 +60,6 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             </NavLink>
           ))}
         </nav>
-        <div className={styles.sidebarFooter}>
-          <span className={styles.statusDot} />
-          <div>
-            <strong>Billing status</strong>
-            <span>Stripe sync is healthy</span>
-          </div>
-        </div>
       </aside>
     </>
   );
