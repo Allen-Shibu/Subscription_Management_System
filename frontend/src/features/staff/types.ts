@@ -10,6 +10,5 @@ export type StaffMember = {
 export type StaffForm = {
   name: string;
   email: string;
-  password: string;
   isAdmin: boolean;
 };

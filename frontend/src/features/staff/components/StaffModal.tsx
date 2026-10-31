@@ -46,32 +46,20 @@ export function StaffModal({ mode, form, setForm, onClose, onSubmit }: StaffModa
               required
             />
           </label>
-          {mode === "create" && (
-            <label className={styles.field}>
-              <span>Password</span>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={form.password}
-                onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
-                required
-              />
-            </label>
-          )}
           <label className={styles.checkboxField}>
             <input
               type="checkbox"
               checked={form.isAdmin}
               onChange={(event) => setForm((current) => ({ ...current, isAdmin: event.target.checked }))}
             />
-            <span>Create as Admin</span>
+            <span>Admin role (demo only)</span>
           </label>
           <div className={styles.modalActions}>
             <button type="button" className={styles.secondaryButton} onClick={onClose}>
               Cancel
             </button>
             <button type="submit" className={styles.primaryButton}>
-              {mode === "create" ? "Create Staff" : "Save Changes"}
+              {mode === "create" ? "Add demo staff" : "Save demo changes"}
             </button>
           </div>
         </form>

@@ -12,7 +12,7 @@ export function StaffHeader({ onAddStaff }: StaffHeaderProps) {
         <p className={styles.eyebrow}>Staff Management</p>
         <h1>Team Members</h1>
         <p className={styles.subtitle}>
-          Manage staff access, roles, and permissions.
+          Preview staff members and roles.
         </p>
       </div>
       <div className={styles.headerActions}>
