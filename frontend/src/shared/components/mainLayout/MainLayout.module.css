@@ -1,0 +1,26 @@
+.appLayout {
+  min-height: 100vh;
+}
+.mainColumn {
+  min-height: 100vh;
+  margin-left: 248px;
+}
+.content {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 30px 32px 48px;
+}
+@media (max-width: 760px) {
+  .mainColumn {
+    margin-left: 0;
+  }
+  .content {
+    padding: 24px 18px 36px;
+  }
+}
+@media (max-width: 420px) {
+  .content {
+    padding: 20px 12px 30px;
+  }
+}
