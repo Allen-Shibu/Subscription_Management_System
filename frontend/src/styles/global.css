@@ -23,6 +23,13 @@ a {
   margin: 64px auto;
   padding: 0 24px;
 }
+.auth-page {
+  display: grid;
+  min-height: 100vh;
+  min-height: 100dvh;
+  place-items: center;
+  padding: 24px;
+}
 .page-header {
   display: flex;
   align-items: center;
